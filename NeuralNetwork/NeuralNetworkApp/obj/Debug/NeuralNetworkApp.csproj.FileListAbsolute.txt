@@ -1,0 +1,8 @@
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\bin\Debug\NeuralNetworkApp.exe.config
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\bin\Debug\NeuralNetworkApp.exe
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\bin\Debug\NeuralNetworkApp.pdb
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\bin\Debug\NeuralNetwork.dll
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\bin\Debug\NeuralNetwork.pdb
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\obj\Debug\NeuralNetworkApp.csprojResolveAssemblyReference.cache
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\obj\Debug\NeuralNetworkApp.exe
+c:\users\martin\documents\visual studio 2015\Projects\NeuralNetwork\NeuralNetworkApp\obj\Debug\NeuralNetworkApp.pdb
