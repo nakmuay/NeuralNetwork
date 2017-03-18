@@ -14,14 +14,14 @@ namespace NeuralNetwork
         double EvaluateDerivative(double value);
     }
 
-    public abstract class TransferFunction : IEvaluatable<TransferFunction>
+    public abstract class ActivationFunction : IEvaluatable<ActivationFunction>
     {
         abstract public double Evaluate(double value);
 
         abstract public double EvaluateDerivative(double value);
     }
 
-    public class SigmoidTransferFunction : TransferFunction
+    public class SigmoidTransferFunction : ActivationFunction
     {
         override public double Evaluate(double value)
         {

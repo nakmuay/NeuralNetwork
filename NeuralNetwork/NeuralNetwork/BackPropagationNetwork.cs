@@ -18,7 +18,7 @@ namespace NeuralNetwork
 
         #endregion
 
-        public BackPropagationNetwork(int inputSize, int[] layerSizes, TransferFunction[] transferFunctions)
+        public BackPropagationNetwork(int inputSize, int[] layerSizes, ActivationFunction[] transferFunctions)
         {
             Console.WriteLine("Creating layers...");
             this.inputLayer = new Layer(inputSize);

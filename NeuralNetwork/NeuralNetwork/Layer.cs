@@ -64,14 +64,14 @@ namespace NeuralNetwork
     class HiddenLayer : Layer
     {
 
-        private readonly TransferFunction transferFunction;
+        private readonly ActivationFunction transferFunction;
 
-        public HiddenLayer(int size, TransferFunction transferFunction) : base(size)
+        public HiddenLayer(int size, ActivationFunction transferFunction) : base(size)
         {
             this.transferFunction = transferFunction;
         }
 
-        public TransferFunction TransferFunction
+        public ActivationFunction TransferFunction
         {
             get
             {

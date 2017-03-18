@@ -14,10 +14,10 @@ namespace NeuralNetworkApp
         {
             int[] layerSizes = { 3, 1 };
 
-            TransferFunction[] transferFunctions =  {new SigmoidTransferFunction(),
+            ActivationFunction[] activationFunction =  {new SigmoidTransferFunction(),
                                                     new SigmoidTransferFunction()};
 
-            BackPropagationNetwork bpn = new BackPropagationNetwork(2, layerSizes, transferFunctions);
+            BackPropagationNetwork bpn = new BackPropagationNetwork(2, layerSizes, activationFunction);
             //bpn.Write();
 
             /*
