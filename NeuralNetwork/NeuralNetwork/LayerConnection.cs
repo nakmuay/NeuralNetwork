@@ -22,11 +22,11 @@ namespace NeuralNetwork
 
             Random rnd = new Random();
 
-            for (int row = 0; row < secondLayer.Size; row++)
+            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
             {
-                for (int column = 0; column < firstLayer.Size + 1; column++)
+                for (int columnIndex = 0; columnIndex < firstLayer.Size + 1; columnIndex++)
                 {
-                    weightMatrix[row, column] = rnd.NextDouble();
+                    weightMatrix[rowIndex, columnIndex] = rnd.NextDouble();
                 }
             }
         }
@@ -35,9 +35,9 @@ namespace NeuralNetwork
         {
             for (int row = 0; row < secondLayer.Size; row++)
             {
-                for (int column = 0; column < firstLayer.Size + 1; column++)
+                for (int columnIndex = 0; columnIndex < firstLayer.Size + 1; columnIndex++)
                 {
-                    Console.Write(String.Format("{0} ", weightMatrix[row, column]));
+                    Console.Write(String.Format("{0} ", weightMatrix[row, columnIndex]));
                 }
                 Console.WriteLine("\n");
             }
@@ -48,17 +48,17 @@ namespace NeuralNetwork
             output = new double[secondLayer.Size];
 
 
-            for (int row = 0; row < secondLayer.Size; row++)
+            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
             {
                 double dotProduct = 0.0f;
-                for (int column = 0; column < firstLayer.Size; column++)
+                for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
                 {
-                    dotProduct += weightMatrix[row, column] * input[column];
+                    dotProduct += weightMatrix[rowIndex, columnIndex] * input[columnIndex];
                 }
 
                 // Add bias term
-                dotProduct += weightMatrix[row, firstLayer.Size];
-                output[row] = dotProduct;
+                dotProduct += weightMatrix[rowIndex, firstLayer.Size];
+                output[rowIndex] = dotProduct;
             }
         }
     }
