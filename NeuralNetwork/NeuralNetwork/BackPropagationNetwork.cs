@@ -62,7 +62,7 @@ namespace NeuralNetwork
             }
         }
 
-        public void Run(ref double[] input, out double[] output)
+        public void Run(double[] input, out double[] output)
         {
             layerInput[0] = input;
             layers[0].Run(input, out layerOutput[0]);
@@ -76,5 +76,11 @@ namespace NeuralNetwork
             output = layerOutput[layerCount - 1];
         }
 
+        public void Train(double[] input, double[] wantedOutput)
+        {
+            // Run the network
+            double[] output;
+            Run(input, out output);
+        }
     }
 }

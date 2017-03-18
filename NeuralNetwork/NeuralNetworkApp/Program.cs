@@ -25,9 +25,10 @@ namespace NeuralNetworkApp
 
             double[] input = { 1.0, 0.5 };
             double[] output;
-            double[] trainingOutput = { 0.25 };
+            double[] wantedOutput = { 0.25 };
 
-            bpn.Run(ref input, out output);
+            //bpn.Run(ref input, out output);
+            bpn.Train(input, wantedOutput);
 
             Console.ReadLine();
         }
