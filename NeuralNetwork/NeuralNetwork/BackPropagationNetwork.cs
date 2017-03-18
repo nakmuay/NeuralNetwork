@@ -11,40 +11,52 @@ namespace NeuralNetwork
 
         #region Private data
 
-        private Layer inputLayer;
+        private double[][] layerInput;
+        private double[][] layerOutput;
+        private double[][] delta;
+
         private int layerCount;
-        private HiddenLayer[] layers;
+        private Layer[] layers;
         private LayerConnection[] layerConnections;
 
         #endregion
 
-        public BackPropagationNetwork(int inputSize, int[] layerSizes, ActivationFunction[] transferFunctions)
+        public BackPropagationNetwork(int[] layerSizes, ActivationFunction[] transferFunctions)
         {
             Console.WriteLine("Creating layers...");
-            this.inputLayer = new Layer(inputSize);
             this.layerCount = layerSizes.Length;
-            layers = new HiddenLayer[layerCount];
+
+            // Initialize variables
+            layerInput = new double[layerCount][];
+            layerOutput = new double[layerCount][];
+            delta = new double[layerCount][];
+
+            layers = new Layer[layerCount];
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
-                layers[layerIndex] = new HiddenLayer(layerSizes[layerIndex], transferFunctions[layerIndex]);
+                // Add one element to hold the bias value
+                layerInput[layerIndex] = new double[layerSizes[layerIndex] + 1];
+                layerOutput[layerIndex] = new double[layerSizes[layerIndex] + 1];
+                delta[layerIndex] = new double[layerSizes[layerIndex]];
+
+                layers[layerIndex] = new Layer(layerSizes[layerIndex], transferFunctions[layerIndex]);
             }
 
             // Create connections between input layer and the first hidden layer
             Console.WriteLine("Creating layer connections ...");
-            layerConnections = new LayerConnection[layerCount];
-            layerConnections[0] = new LayerConnection(inputLayer, layers[0]);
 
             // Create connections between remaining layers
-            for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++)
+            layerConnections = new LayerConnection[layerCount - 1];
+            for (int connectionIndex = 0; connectionIndex < layerCount - 1; connectionIndex++)
             {
-                layerConnections[layerIndex + 1] = new LayerConnection(layers[layerIndex], layers[layerIndex + 1] );
+                layerConnections[connectionIndex] = new LayerConnection(layers[connectionIndex], layers[connectionIndex + 1]);
             }
         }
 
         public void Write()
         {
             // Print weight Matrix
-            for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
+            for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++)
             {
                 layerConnections[layerIndex].Write();
             }
@@ -52,31 +64,16 @@ namespace NeuralNetwork
 
         public void Run(ref double[] input, out double[] output)
         {
-            int outputSize = layers[layerCount - 1].Size;
-            output = new double[outputSize];
+            layerInput[0] = input;
+            layers[0].Run(ref input, out layerOutput[0]);
 
-            double[] connectionInput;
-            double[] connectionOutput;
-            double[] layerOutput;
-            double[] prevLayerOutput = { 0 };
-            for (int l = 0; l < layerCount; l++)
+            for (int l = 0; l < layerCount - 1; l++)
             {
-                if (l == 0)
-                {
-                    connectionInput = input;
-                }
-                else
-                {
-                    connectionInput = prevLayerOutput;
-                }
-
-                layerConnections[l].Run(ref connectionInput, out connectionOutput);
-                layers[l].Run(ref connectionOutput, out layerOutput);
-
-                prevLayerOutput = layerOutput;
+                layerConnections[l].Run(ref layerOutput[l], out layerInput[l + 1]);
+                layers[l + 1].Run(ref layerInput[l + 1], out layerOutput[l + 1]);
             }
 
-            output = prevLayerOutput;
+            output = layerOutput[layerCount - 1];
         }
 
     }

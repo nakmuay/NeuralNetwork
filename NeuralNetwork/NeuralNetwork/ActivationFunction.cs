@@ -21,6 +21,19 @@ namespace NeuralNetwork
         abstract public double EvaluateDerivative(double value);
     }
 
+    public class None : ActivationFunction
+    {
+        override public double Evaluate(double value)
+        {
+            return value;
+        }
+
+        override public double EvaluateDerivative(double value)
+        {
+            return 1.0;
+        }
+    }
+
     public class SigmoidTransferFunction : ActivationFunction
     {
         override public double Evaluate(double value)

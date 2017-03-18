@@ -10,7 +10,7 @@ namespace NeuralNetwork
     {
         private Layer firstLayer;
         private Layer secondLayer;
-        private double[][] weightMatrix;
+        private double[,] weightMatrix;
 
         public LayerConnection(Layer firstLayer, Layer secondLayer)
         {
@@ -18,30 +18,26 @@ namespace NeuralNetwork
             this.secondLayer = secondLayer;
 
             // Allocate matrix size
-            weightMatrix = new double[firstLayer.Size + 1][];
+            weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
 
             Random rnd = new Random();
 
-            for (int row = 0; row < firstLayer.Size + 1; row++)
+            for (int row = 0; row < secondLayer.Size; row++)
             {
-                weightMatrix[row] = new double[secondLayer.Size + 1];
-                for (int column = 0; column < secondLayer.Size + 1; column++)
+                for (int column = 0; column < firstLayer.Size + 1; column++)
                 {
-                    weightMatrix[row][column] = rnd.NextDouble();
+                    weightMatrix[row, column] = rnd.NextDouble();
                 }
             }
         }
 
         public void Write()
         {
-            int numberOfRows = weightMatrix.Length;
-            int numberOfColumns = weightMatrix[0].Length;
-
-            for (int row = 0; row < numberOfRows; row++)
+            for (int row = 0; row < secondLayer.Size; row++)
             {
-                for (int column = 0; column < numberOfColumns; column++)
+                for (int column = 0; column < firstLayer.Size + 1; column++)
                 {
-                    Console.Write(String.Format("{0} ", weightMatrix[row][column]));
+                    Console.Write(String.Format("{0} ", weightMatrix[row, column]));
                 }
                 Console.WriteLine("\n");
             }
@@ -51,19 +47,19 @@ namespace NeuralNetwork
         {
             output = new double[secondLayer.Size];
 
-            for (int column = 0; column < secondLayer.Size; column++)
+
+            for (int row = 0; row < secondLayer.Size; row++)
             {
                 double dotProduct = 0.0f;
-                for (int row = 0; row < firstLayer.Size; row++)
+                for (int column = 0; column < firstLayer.Size; column++)
                 {
-                    dotProduct += weightMatrix[row][column] * input[row];
+                    dotProduct += weightMatrix[row, column] * input[column];
                 }
-                
+
                 // Add bias term
-                dotProduct += weightMatrix[firstLayer.Size][column];
-                output[column] = dotProduct;
+                dotProduct += weightMatrix[row, firstLayer.Size];
+                output[row] = dotProduct;
             }
         }
-
     }
 }
