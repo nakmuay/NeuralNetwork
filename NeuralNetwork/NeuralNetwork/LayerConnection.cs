@@ -43,7 +43,7 @@ namespace NeuralNetwork
             }
         }
 
-        public void Run(ref double[] input, out double[] output)
+        public void Run(double[] input, out double[] output)
         {
             output = new double[secondLayer.Size];
 

@@ -65,12 +65,12 @@ namespace NeuralNetwork
         public void Run(ref double[] input, out double[] output)
         {
             layerInput[0] = input;
-            layers[0].Run(ref input, out layerOutput[0]);
+            layers[0].Run(input, out layerOutput[0]);
 
             for (int l = 0; l < layerCount - 1; l++)
             {
-                layerConnections[l].Run(ref layerOutput[l], out layerInput[l + 1]);
-                layers[l + 1].Run(ref layerInput[l + 1], out layerOutput[l + 1]);
+                layerConnections[l].Run(layerOutput[l], out layerInput[l + 1]);
+                layers[l + 1].Run(layerInput[l + 1], out layerOutput[l + 1]);
             }
 
             output = layerOutput[layerCount - 1];

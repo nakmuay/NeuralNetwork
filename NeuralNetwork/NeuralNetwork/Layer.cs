@@ -39,13 +39,13 @@ namespace NeuralNetwork
         #endregion
 
 
-        public void Run(ref double[] input, out double[] output)
+        public void Run(double[] input, out double[] output)
         {
             Console.WriteLine("Running layer!");
-            RunCore(ref input, out output);
+            RunCore(input, out output);
         }
 
-        public virtual void RunCore(ref double[] input, out double[] output)
+        public virtual void RunCore(double[] input, out double[] output)
         {
             int size = input.Length;
             output = new double[size];
