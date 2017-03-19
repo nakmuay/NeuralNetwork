@@ -12,10 +12,11 @@ namespace NeuralNetworkApp
     {
         static void Main(string[] args)
         {
-            int[] layerSizes = { 2, 3, 2 };
+            int[] layerSizes = { 2, 5, 2 };
 
             ActivationFunction[] activationFunction =  {
                                                         new None(),
+                                                        new SigmoidTransferFunction(),
                                                         new SigmoidTransferFunction(),
                                                         new SigmoidTransferFunction(),
                                                         };
@@ -36,8 +37,10 @@ namespace NeuralNetworkApp
             for (int epoch = 0; epoch < numberOfTrainingEpochs; epoch++)
             {
                 bpn.Train(input, wantedOutput, learningRate, out error);
-               // Console.WriteLine("Error: {0}", error);
             }
+
+            bpn.Train(input, wantedOutput, learningRate, out error);
+            Console.WriteLine("Error: {0}", error);
 
             bpn.Run(input, out output);
             Console.WriteLine("Output after training: {0}", output[1]);

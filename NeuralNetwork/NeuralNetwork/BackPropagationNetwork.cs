@@ -51,16 +51,8 @@ namespace NeuralNetwork
             layerConnections = new LayerConnection[layerCount];
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
-                if (layerIndex == 0)
-                {
-                    // Create connections between input layer and the first hidden layer
-                    layerConnections[layerIndex] = new LayerConnection(inputLayer, layers[layerIndex]);
-                }
-                else
-                {
-                    // Create connections between remaining layers
-                    layerConnections[layerIndex] = new LayerConnection(layers[layerIndex - 1], layers[layerIndex]);
-                }
+                // Create connections between input layer and the first hidden layer
+                layerConnections[layerIndex] = new LayerConnection(layerIndex == 0 ? inputLayer : layers[layerIndex - 1], layers[layerIndex]);
             }
         }
 
