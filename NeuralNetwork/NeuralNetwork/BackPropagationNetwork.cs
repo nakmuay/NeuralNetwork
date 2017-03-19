@@ -76,11 +76,43 @@ namespace NeuralNetwork
             output = layerOutput[layerCount - 1];
         }
 
-        public void Train(double[] input, double[] wantedOutput)
+        public void Train(double[] input, double[] wantedOutput, double learningRate, out double error)
         {
             // Run the network
             double[] output;
             Run(input, out output);
+
+            error = 0.0;
+
+            // Calculate deltas
+            for (int layerIndex = layerCount - 1; layerIndex > 0; layerIndex--)
+            {
+                for (int nodeIndex = 0; nodeIndex < layers[layerIndex].Size; nodeIndex++)
+                {
+                    // Handle the output layer case
+                    if (layerIndex == layerCount - 1)
+                    {
+                        delta[layerIndex][nodeIndex] = (wantedOutput[nodeIndex] - output[nodeIndex]);
+                        error += Math.Pow(delta[layerIndex][nodeIndex], 2);
+                    }
+                }
+
+                if (layerIndex == layerCount - 1)
+                {
+                    layers[layerIndex].CalculateDeltas(delta[layerIndex], out delta[layerIndex]);
+                    continue;
+                }
+
+                layerConnections[layerIndex].Backpropagate(delta[layerIndex + 1], out delta[layerIndex]);
+                layers[layerIndex].CalculateDeltas(delta[layerIndex], out delta[layerIndex]);
+            }
+
+            // Update weights
+            for (int connectionIndex = 0; connectionIndex < layerConnections.GetLength(0) - 1; connectionIndex++)
+            {
+                layerConnections[connectionIndex].UpdateWeights(layerOutput[connectionIndex], delta[connectionIndex], delta[connectionIndex + 1], learningRate);
+                layerConnections[connectionIndex].UpdateDeltas(delta[connectionIndex + 1], learningRate);
+            }
         }
     }
 }

@@ -41,7 +41,6 @@ namespace NeuralNetwork
 
         public void Run(double[] input, out double[] output)
         {
-            Console.WriteLine("Running layer!");
             RunCore(input, out output);
         }
 
@@ -55,9 +54,14 @@ namespace NeuralNetwork
             }
         }
 
-        public void Train()
+        public void CalculateDeltas(double[] backPropDeltas, out double[] thisLayerDeltas)
         {
-            Console.WriteLine("Training layer!");
+            thisLayerDeltas = new double[size];
+
+            for(int nodeIndex = 0; nodeIndex < size; nodeIndex++)
+            {
+                thisLayerDeltas[nodeIndex] = activationFunction.EvaluateDerivative(backPropDeltas[nodeIndex]);
+            }
         }
     }
 }
