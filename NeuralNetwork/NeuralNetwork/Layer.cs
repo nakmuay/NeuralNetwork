@@ -54,13 +54,13 @@ namespace NeuralNetwork
             }
         }
 
-        public void CalculateDeltas(double[] backPropDeltas, out double[] thisLayerDeltas)
+        public void CalculateDeltas(double[] input, double[] backPropDeltas, out double[] thisLayerDeltas)
         {
             thisLayerDeltas = new double[size];
 
             for(int nodeIndex = 0; nodeIndex < size; nodeIndex++)
             {
-                thisLayerDeltas[nodeIndex] = activationFunction.EvaluateDerivative(backPropDeltas[nodeIndex]);
+                thisLayerDeltas[nodeIndex] = activationFunction.EvaluateDerivative(input[nodeIndex]) * backPropDeltas[nodeIndex];
             }
         }
     }

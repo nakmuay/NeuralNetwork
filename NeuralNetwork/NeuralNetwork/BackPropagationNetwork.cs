@@ -15,6 +15,7 @@ namespace NeuralNetwork
         private double[][] layerOutput;
         private double[][] delta;
 
+        private Layer inputLayer;
         private int layerCount;
         private Layer[] layers;
         private LayerConnection[] layerConnections;
@@ -24,39 +25,49 @@ namespace NeuralNetwork
         public BackPropagationNetwork(int[] layerSizes, ActivationFunction[] transferFunctions)
         {
             Console.WriteLine("Creating layers...");
-            this.layerCount = layerSizes.Length;
 
             // Initialize variables
+            layerCount = layerSizes.Length - 1;
             layerInput = new double[layerCount][];
             layerOutput = new double[layerCount][];
             delta = new double[layerCount][];
+
+            // Treat input layer separately
+            inputLayer = new Layer(layerSizes[0], transferFunctions[0]);
 
             layers = new Layer[layerCount];
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
                 // Add one element to hold the bias value
-                layerInput[layerIndex] = new double[layerSizes[layerIndex] + 1];
-                layerOutput[layerIndex] = new double[layerSizes[layerIndex] + 1];
-                delta[layerIndex] = new double[layerSizes[layerIndex]];
+                layerInput[layerIndex] = new double[layerSizes[layerIndex + 1]];
+                layerOutput[layerIndex] = new double[layerSizes[layerIndex + 1]];
+                delta[layerIndex] = new double[layerSizes[layerIndex + 1]];
 
-                layers[layerIndex] = new Layer(layerSizes[layerIndex], transferFunctions[layerIndex]);
+                layers[layerIndex] = new Layer(layerSizes[layerIndex + 1], transferFunctions[layerIndex + 1]);
             }
 
-            // Create connections between input layer and the first hidden layer
             Console.WriteLine("Creating layer connections ...");
 
-            // Create connections between remaining layers
-            layerConnections = new LayerConnection[layerCount - 1];
-            for (int connectionIndex = 0; connectionIndex < layerCount - 1; connectionIndex++)
+            layerConnections = new LayerConnection[layerCount];
+            for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
-                layerConnections[connectionIndex] = new LayerConnection(layers[connectionIndex], layers[connectionIndex + 1]);
+                if (layerIndex == 0)
+                {
+                    // Create connections between input layer and the first hidden layer
+                    layerConnections[layerIndex] = new LayerConnection(inputLayer, layers[layerIndex]);
+                }
+                else
+                {
+                    // Create connections between remaining layers
+                    layerConnections[layerIndex] = new LayerConnection(layers[layerIndex - 1], layers[layerIndex]);
+                }
             }
         }
 
         public void Write()
         {
             // Print weight Matrix
-            for (int layerIndex = 0; layerIndex < layerCount - 1; layerIndex++)
+            for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
                 layerConnections[layerIndex].Write();
             }
@@ -64,13 +75,10 @@ namespace NeuralNetwork
 
         public void Run(double[] input, out double[] output)
         {
-            layerInput[0] = input;
-            layers[0].Run(input, out layerOutput[0]);
-
-            for (int l = 0; l < layerCount - 1; l++)
+            for (int l = 0; l < layerCount; l++)
             {
-                layerConnections[l].Run(layerOutput[l], out layerInput[l + 1]);
-                layers[l + 1].Run(layerInput[l + 1], out layerOutput[l + 1]);
+                layerConnections[l].ForwardPropagate((l == 0 ? input : layerOutput[l - 1]), out layerInput[l]);
+                layers[l].Run(layerInput[l], out layerOutput[l]);
             }
 
             output = layerOutput[layerCount - 1];
@@ -84,34 +92,27 @@ namespace NeuralNetwork
 
             error = 0.0;
 
-            // Calculate deltas
             for (int layerIndex = layerCount - 1; layerIndex > 0; layerIndex--)
             {
-                for (int nodeIndex = 0; nodeIndex < layers[layerIndex].Size; nodeIndex++)
+                // Handle the output layer case
+                if (layerIndex == layerCount - 1)
                 {
-                    // Handle the output layer case
-                    if (layerIndex == layerCount - 1)
+                    for (int nodeIndex = 0; nodeIndex < layers[layerIndex].Size; nodeIndex++)
                     {
-                        delta[layerIndex][nodeIndex] = (wantedOutput[nodeIndex] - output[nodeIndex]);
+                        delta[layerIndex][nodeIndex] = (output[nodeIndex] - wantedOutput[nodeIndex]);
                         error += Math.Pow(delta[layerIndex][nodeIndex], 2);
                     }
                 }
 
-                if (layerIndex == layerCount - 1)
-                {
-                    layers[layerIndex].CalculateDeltas(delta[layerIndex], out delta[layerIndex]);
-                    continue;
-                }
-
-                layerConnections[layerIndex].Backpropagate(delta[layerIndex + 1], out delta[layerIndex]);
-                layers[layerIndex].CalculateDeltas(delta[layerIndex], out delta[layerIndex]);
+                layers[layerIndex].CalculateDeltas(layerInput[layerIndex], delta[layerIndex], out delta[layerIndex]);
+                layerConnections[layerIndex].Backpropagate(delta[layerIndex], out delta[layerIndex - 1]);
             }
 
             // Update weights
-            for (int connectionIndex = 0; connectionIndex < layerConnections.GetLength(0) - 1; connectionIndex++)
+            for (int layerIndex = 0; layerIndex < layerConnections.GetLength(0); layerIndex++)
             {
-                layerConnections[connectionIndex].UpdateWeights(layerOutput[connectionIndex], delta[connectionIndex], delta[connectionIndex + 1], learningRate);
-                layerConnections[connectionIndex].UpdateDeltas(delta[connectionIndex + 1], learningRate);
+                double[] connectionInput = (layerIndex == 0 ? input : layerOutput[layerIndex - 1]);
+                layerConnections[layerIndex].UpdateWeights(connectionInput, delta[layerIndex], learningRate);
             }
         }
     }

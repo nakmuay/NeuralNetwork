@@ -43,7 +43,7 @@ namespace NeuralNetwork
             }
         }
 
-        public void Run(double[] input, out double[] output)
+        public void ForwardPropagate(double[] input, out double[] output)
         {
             output = new double[secondLayer.Size];
 
@@ -62,26 +62,6 @@ namespace NeuralNetwork
             }
         }
 
-        public void UpdateWeights(double[] firstLayerOutput, double[] firstLayerDeltas, double[] secondLayerDeltas, double learningRate)
-        {
-            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
-            {
-                // Update weights
-                for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
-                {
-                    weightMatrix[rowIndex, columnIndex] -=  learningRate * secondLayerDeltas[columnIndex];
-                }
-            }
-        }
-
-        public void UpdateDeltas(double[] deltas, double learningRate)
-        {
-            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
-            {
-                weightMatrix[rowIndex, weightMatrix.GetLength(1) - 1] -= learningRate * deltas[rowIndex];
-            }
-        }
-
         public void Backpropagate(double[] deltas, out double[] backPropagatedDeltas)
         {
             backPropagatedDeltas = new double[firstLayer.Size];
@@ -93,10 +73,25 @@ namespace NeuralNetwork
                 dotProduct = 0.0f;
                 for (int columnIndex = 0; columnIndex < transposedWeightMatrix.GetLength(1); columnIndex++)
                 {
-                     dotProduct += transposedWeightMatrix[rowIndex, columnIndex] * deltas[columnIndex];
+                    dotProduct += transposedWeightMatrix[rowIndex, columnIndex] * deltas[columnIndex];
                 }
 
                 backPropagatedDeltas[rowIndex] = dotProduct;
+            }
+        }
+
+        public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate)
+        {
+            // Update weights
+            for (int rowIndex = 0; rowIndex < deltas.GetLength(0); rowIndex++)
+            {
+                for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
+                {
+                    weightMatrix[rowIndex, columnIndex] -=  learningRate * deltas[rowIndex] * prevLayerOutput[columnIndex];
+                }
+
+                // Update deltas
+                weightMatrix[rowIndex, weightMatrix.GetLength(1) - 1] -= learningRate * deltas[rowIndex];
             }
         }
 

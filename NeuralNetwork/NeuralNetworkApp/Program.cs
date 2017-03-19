@@ -12,26 +12,26 @@ namespace NeuralNetworkApp
     {
         static void Main(string[] args)
         {
-            int[] layerSizes = { 1, 5, 1 };
+            int[] layerSizes = { 2, 3, 2 };
 
             ActivationFunction[] activationFunction =  {
                                                         new None(),
                                                         new SigmoidTransferFunction(),
-                                                        new SigmoidTransferFunction()
+                                                        new SigmoidTransferFunction(),
                                                         };
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
             //bpn.Write();
 
-            double[] input = { 1.0 };
+            double[] input = { 0.5, 0.25 };
             double[] output;
-            double[] wantedOutput = { 0.5 };
+            double[] wantedOutput = { 0.25, 0.0625 };
             double learningRate = 0.01;
-            int numberOfTrainingEpochs = 10000;
+            int numberOfTrainingEpochs = 100000;
 
             double error;
-            bpn.Train(input, wantedOutput, learningRate, out error);
-            Console.WriteLine("Error before training: {0}", error);
+            bpn.Run(input, out output);
+            Console.WriteLine("Output before training: {0}", output[1]);
 
             for (int epoch = 0; epoch < numberOfTrainingEpochs; epoch++)
             {
@@ -39,8 +39,8 @@ namespace NeuralNetworkApp
                // Console.WriteLine("Error: {0}", error);
             }
 
-            bpn.Train(input, wantedOutput, learningRate, out error);
-            Console.WriteLine("Error after training: {0}", error);
+            bpn.Run(input, out output);
+            Console.WriteLine("Output after training: {0}", output[1]);
 
             Console.ReadLine();
         }
