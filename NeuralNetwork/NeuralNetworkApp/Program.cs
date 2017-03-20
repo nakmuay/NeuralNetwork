@@ -12,17 +12,15 @@ namespace NeuralNetworkApp
     {
         static void Main(string[] args)
         {
-            int[] layerSizes = { 2, 5, 2 };
+            int[] layerSizes = { 2, 3, 2 };
 
             ActivationFunction[] activationFunction =  {
                                                         new None(),
                                                         new SigmoidTransferFunction(),
                                                         new SigmoidTransferFunction(),
-                                                        new SigmoidTransferFunction(),
                                                         };
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
-            //bpn.Write();
 
             double[] input = { 0.5, 0.25 };
             double[] output;

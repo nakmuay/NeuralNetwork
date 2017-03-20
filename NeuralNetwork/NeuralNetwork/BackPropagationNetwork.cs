@@ -24,6 +24,12 @@ namespace NeuralNetwork
 
         public BackPropagationNetwork(int[] layerSizes, ActivationFunction[] transferFunctions)
         {
+            // Validate input
+            if (transferFunctions.Length != layerSizes.Length)
+            {
+                throw new ArgumentException("Cannot create a network with the provided parameters.");
+            }
+
             Console.WriteLine("Creating layers...");
 
             // Initialize variables
@@ -35,6 +41,7 @@ namespace NeuralNetwork
             // Treat input layer separately
             inputLayer = new Layer(layerSizes[0], transferFunctions[0]);
 
+            // Create hidden layers and output layer
             layers = new Layer[layerCount];
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
@@ -48,13 +55,22 @@ namespace NeuralNetwork
 
             Console.WriteLine("Creating layer connections ...");
 
+            // Create connections between layers
             layerConnections = new LayerConnection[layerCount];
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
-                // Create connections between input layer and the first hidden layer
                 layerConnections[layerIndex] = new LayerConnection(layerIndex == 0 ? inputLayer : layers[layerIndex - 1], layers[layerIndex]);
             }
         }
+
+        #region properties
+
+        private int lastLayerIndex
+        {
+            get { return layerCount - 1; }
+        }
+
+        #endregion
 
         public void Write()
         {
@@ -67,27 +83,44 @@ namespace NeuralNetwork
 
         public void Run(double[] input, out double[] output)
         {
+            // Validate input
+            if (input.Length != inputLayer.Size)
+            {
+                throw new ArgumentException("The input data must have the same size as the network input layer.");
+            }
+
+            // Run the network
             for (int l = 0; l < layerCount; l++)
             {
                 layerConnections[l].ForwardPropagate((l == 0 ? input : layerOutput[l - 1]), out layerInput[l]);
                 layers[l].Run(layerInput[l], out layerOutput[l]);
             }
 
-            output = layerOutput[layerCount - 1];
+            output = layerOutput[lastLayerIndex];
         }
 
         public void Train(double[] input, double[] wantedOutput, double learningRate, out double error)
         {
+            // Validate input
+            if (input.Length != inputLayer.Size)
+            {
+                throw new ArgumentException("The input data must have the same size as the network input layer.");
+            }
+
+            if (wantedOutput.Length != layers[lastLayerIndex].Size)
+            {
+                throw new ArgumentException("The training output data must have the same size as the network output layer.");
+            }
+
             // Run the network
             double[] output;
             Run(input, out output);
 
             error = 0.0;
-
-            for (int layerIndex = layerCount - 1; layerIndex > 0; layerIndex--)
+            for (int layerIndex = lastLayerIndex; layerIndex > 0; layerIndex--)
             {
                 // Handle the output layer case
-                if (layerIndex == layerCount - 1)
+                if (layerIndex == lastLayerIndex)
                 {
                     for (int nodeIndex = 0; nodeIndex < layers[layerIndex].Size; nodeIndex++)
                     {
@@ -101,7 +134,7 @@ namespace NeuralNetwork
             }
 
             // Update weights
-            for (int layerIndex = 0; layerIndex < layerConnections.GetLength(0); layerIndex++)
+            for (int layerIndex = 0; layerIndex < layerConnections.Length; layerIndex++)
             {
                 double[] connectionInput = (layerIndex == 0 ? input : layerOutput[layerIndex - 1]);
                 layerConnections[layerIndex].UpdateWeights(connectionInput, delta[layerIndex], learningRate);

@@ -47,7 +47,6 @@ namespace NeuralNetwork
         {
             output = new double[secondLayer.Size];
 
-
             for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
             {
                 double dotProduct = 0.0f;
@@ -56,6 +55,7 @@ namespace NeuralNetwork
                     dotProduct += weightMatrix[rowIndex, columnIndex] * input[columnIndex];
                 }
 
+                // TODO: [martin, 2017-03-20] Extract bias to separate field. There is no point to keep it as part of the weight matrix until the code is vectorized.
                 // Add bias term
                 dotProduct += weightMatrix[rowIndex, firstLayer.Size];
                 output[rowIndex] = dotProduct;
@@ -83,7 +83,7 @@ namespace NeuralNetwork
         public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate)
         {
             // Update weights
-            for (int rowIndex = 0; rowIndex < deltas.GetLength(0); rowIndex++)
+            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
             {
                 for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
                 {
