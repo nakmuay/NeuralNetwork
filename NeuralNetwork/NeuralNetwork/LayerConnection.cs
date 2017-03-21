@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
+
     class LayerConnection
     {
         private Layer firstLayer;
@@ -22,22 +23,22 @@ namespace NeuralNetwork
 
             Random rnd = new Random();
 
-            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
+            for (int i = 0; i < secondLayer.Size; i++)
             {
-                for (int columnIndex = 0; columnIndex < firstLayer.Size + 1; columnIndex++)
+                for (int j = 0; j < firstLayer.Size + 1; j++)
                 {
-                    weightMatrix[rowIndex, columnIndex] = rnd.NextDouble();
+                    weightMatrix[i, j] = rnd.NextDouble();
                 }
             }
         }
 
         public void Write()
         {
-            for (int row = 0; row < secondLayer.Size; row++)
+            for (int i = 0; i < secondLayer.Size; i++)
             {
-                for (int columnIndex = 0; columnIndex < firstLayer.Size + 1; columnIndex++)
+                for (int j = 0; j < firstLayer.Size + 1; j++)
                 {
-                    Console.Write(String.Format("{0} ", weightMatrix[row, columnIndex]));
+                    Console.Write(String.Format("{0} ", weightMatrix[i, j]));
                 }
                 Console.WriteLine("\n");
             }
@@ -47,18 +48,18 @@ namespace NeuralNetwork
         {
             output = new double[secondLayer.Size];
 
-            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
+            for (int i = 0; i < secondLayer.Size; i++)
             {
                 double dotProduct = 0.0f;
-                for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
+                for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    dotProduct += weightMatrix[rowIndex, columnIndex] * input[columnIndex];
+                    dotProduct += weightMatrix[i, j] * input[j];
                 }
 
                 // TODO: [martin, 2017-03-20] Extract bias to separate field. There is no point to keep it as part of the weight matrix until the code is vectorized.
                 // Add bias term
-                dotProduct += weightMatrix[rowIndex, firstLayer.Size];
-                output[rowIndex] = dotProduct;
+                dotProduct += weightMatrix[i, firstLayer.Size];
+                output[i] = dotProduct;
             }
         }
 
@@ -68,30 +69,30 @@ namespace NeuralNetwork
             double[,] transposedWeightMatrix = getTransposedWeightMatrix();
 
             double dotProduct = 0.0f;
-            for (int rowIndex = 0; rowIndex < transposedWeightMatrix.GetLength(0); rowIndex++)
+            for (int i = 0; i < transposedWeightMatrix.GetLength(0); i++)
             {
                 dotProduct = 0.0f;
-                for (int columnIndex = 0; columnIndex < transposedWeightMatrix.GetLength(1); columnIndex++)
+                for (int j = 0; j < transposedWeightMatrix.GetLength(1); j++)
                 {
-                    dotProduct += transposedWeightMatrix[rowIndex, columnIndex] * deltas[columnIndex];
+                    dotProduct += transposedWeightMatrix[i, j] * deltas[j];
                 }
 
-                backPropagatedDeltas[rowIndex] = dotProduct;
+                backPropagatedDeltas[i] = dotProduct;
             }
         }
 
         public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate)
         {
             // Update weights
-            for (int rowIndex = 0; rowIndex < secondLayer.Size; rowIndex++)
+            for (int i = 0; i < secondLayer.Size; i++)
             {
-                for (int columnIndex = 0; columnIndex < firstLayer.Size; columnIndex++)
+                for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    weightMatrix[rowIndex, columnIndex] -=  learningRate * deltas[rowIndex] * prevLayerOutput[columnIndex];
+                    weightMatrix[i, j] -=  learningRate * deltas[i] * prevLayerOutput[j];
                 }
 
                 // Update deltas
-                weightMatrix[rowIndex, weightMatrix.GetLength(1) - 1] -= learningRate * deltas[rowIndex];
+                weightMatrix[i, weightMatrix.GetLength(1) - 1] -= learningRate * deltas[i];
             }
         }
 
@@ -99,11 +100,11 @@ namespace NeuralNetwork
         {
             double[,] transposedWeightMatrix = new double[firstLayer.Size, secondLayer.Size];
 
-            for (int rowIndex = 0; rowIndex < transposedWeightMatrix.GetLength(0); rowIndex++)
+            for (int i = 0; i < transposedWeightMatrix.GetLength(0); i++)
             {
-                for (int columnIndex = 0; columnIndex < transposedWeightMatrix.GetLength(1); columnIndex++)
+                for (int j = 0; j < transposedWeightMatrix.GetLength(1); j++)
                 {
-                    transposedWeightMatrix[rowIndex, columnIndex] = weightMatrix[columnIndex, rowIndex];
+                    transposedWeightMatrix[i, j] = weightMatrix[j, i];
                 }
             }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
+
     public class BackPropagationNetwork
     {
 
@@ -22,7 +23,7 @@ namespace NeuralNetwork
 
         #endregion
 
-        public BackPropagationNetwork(int[] layerSizes, ActivationFunction[] transferFunctions)
+        public BackPropagationNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions)
         {
             // Validate input
             if (transferFunctions.Length != layerSizes.Length)
@@ -43,23 +44,23 @@ namespace NeuralNetwork
 
             // Create hidden layers and output layer
             layers = new Layer[layerCount];
-            for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
+            for (int i = 0; i < layerCount; i++)
             {
                 // Add one element to hold the bias value
-                layerInput[layerIndex] = new double[layerSizes[layerIndex + 1]];
-                layerOutput[layerIndex] = new double[layerSizes[layerIndex + 1]];
-                delta[layerIndex] = new double[layerSizes[layerIndex + 1]];
+                layerInput[i]  = new double[layerSizes[i + 1]];
+                layerOutput[i] = new double[layerSizes[i + 1]];
+                delta[i]       = new double[layerSizes[i + 1]];
 
-                layers[layerIndex] = new Layer(layerSizes[layerIndex + 1], transferFunctions[layerIndex + 1]);
+                layers[i]      = new Layer(layerSizes[i + 1], transferFunctions[i + 1]);
             }
 
             Console.WriteLine("Creating layer connections ...");
 
             // Create connections between layers
             layerConnections = new LayerConnection[layerCount];
-            for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
+            for (int i = 0; i < layerCount; i++)
             {
-                layerConnections[layerIndex] = new LayerConnection(layerIndex == 0 ? inputLayer : layers[layerIndex - 1], layers[layerIndex]);
+                layerConnections[i] = new LayerConnection(i == 0 ? inputLayer : layers[i - 1], layers[i]);
             }
         }
 
@@ -90,10 +91,10 @@ namespace NeuralNetwork
             }
 
             // Run the network
-            for (int l = 0; l < layerCount; l++)
+            for (int i = 0; i < layerCount; i++)
             {
-                layerConnections[l].ForwardPropagate((l == 0 ? input : layerOutput[l - 1]), out layerInput[l]);
-                layers[l].Run(layerInput[l], out layerOutput[l]);
+                layerConnections[i].ForwardPropagate((i == 0 ? input : layerOutput[i - 1]), out layerInput[i]);
+                layers[i].Run(layerInput[i], out layerOutput[i]);
             }
 
             output = layerOutput[lastLayerIndex];
@@ -116,28 +117,26 @@ namespace NeuralNetwork
             double[] output;
             Run(input, out output);
 
+            // Calculate error for output layer
             error = 0.0;
-            for (int layerIndex = lastLayerIndex; layerIndex > 0; layerIndex--)
+            for (int i = 0; i < layers[lastLayerIndex].Size; i++)
             {
-                // Handle the output layer case
-                if (layerIndex == lastLayerIndex)
-                {
-                    for (int nodeIndex = 0; nodeIndex < layers[layerIndex].Size; nodeIndex++)
-                    {
-                        delta[layerIndex][nodeIndex] = (output[nodeIndex] - wantedOutput[nodeIndex]);
-                        error += Math.Pow(delta[layerIndex][nodeIndex], 2);
-                    }
-                }
+                delta[lastLayerIndex][i] = (output[i] - wantedOutput[i]);
+                error += Math.Pow(delta[lastLayerIndex][i], 2);
+            }
 
-                layers[layerIndex].CalculateDeltas(layerInput[layerIndex], delta[layerIndex], out delta[layerIndex]);
-                layerConnections[layerIndex].Backpropagate(delta[layerIndex], out delta[layerIndex - 1]);
+            // Backpropagate error through hidden layers
+            for (int i = lastLayerIndex; i > 0; i--)
+            {
+                layers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
+                layerConnections[i].Backpropagate(delta[i], out delta[i - 1]);
             }
 
             // Update weights
-            for (int layerIndex = 0; layerIndex < layerConnections.Length; layerIndex++)
+            for (int i = 0; i < layerConnections.Length; i++)
             {
-                double[] connectionInput = (layerIndex == 0 ? input : layerOutput[layerIndex - 1]);
-                layerConnections[layerIndex].UpdateWeights(connectionInput, delta[layerIndex], learningRate);
+                double[] connectionInput = (i == 0 ? input : layerOutput[i - 1]);
+                layerConnections[i].UpdateWeights(connectionInput, delta[i], learningRate);
             }
         }
     }

@@ -7,43 +7,40 @@ using System.Threading.Tasks;
 namespace NeuralNetwork
 {
 
-    interface IEvaluatable<T>
+    public interface IEvaluatable<T>
     {
-        double Evaluate(double value);
+        T Evaluate(T value);
 
-        double EvaluateDerivative(double value);
+        T EvaluateDerivative(T value);
     }
 
-    public abstract class ActivationFunction : IEvaluatable<ActivationFunction>
+    public interface IDoubleEvaluatable : IEvaluatable<double>
     {
-        abstract public double Evaluate(double value);
-
-        abstract public double EvaluateDerivative(double value);
     }
 
-    public class None : ActivationFunction
+    public class None : IDoubleEvaluatable
     {
-        override public double Evaluate(double value)
+        public double Evaluate(double value)
         {
             return value;
         }
 
-        override public double EvaluateDerivative(double value)
+        public double EvaluateDerivative(double value)
         {
             return 1.0;
         }
     }
 
-    public class SigmoidTransferFunction : ActivationFunction
+    public class SigmoidTransferFunction : IDoubleEvaluatable
     {
-        override public double Evaluate(double value)
+        public double Evaluate(double value)
         {
             return 1.0 / (1.0 + Math.Exp(-value));
         }
 
-        override public double EvaluateDerivative(double value)
+        public double EvaluateDerivative(double value)
         {
-            return Evaluate(value) * (1-Evaluate(value));
+            return Evaluate(value) * (1 - Evaluate(value));
         }
     }
 

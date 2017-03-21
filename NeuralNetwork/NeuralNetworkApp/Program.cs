@@ -8,13 +8,14 @@ using NeuralNetwork;
 
 namespace NeuralNetworkApp
 {
+
     class Program
     {
         static void Main(string[] args)
         {
-            int[] layerSizes = { 2, 3, 2 };
+            int[] layerSizes = {2, 3, 2};
 
-            ActivationFunction[] activationFunction =  {
+            IDoubleEvaluatable[] activationFunction =  {
                                                         new None(),
                                                         new SigmoidTransferFunction(),
                                                         new SigmoidTransferFunction(),
@@ -22,15 +23,20 @@ namespace NeuralNetworkApp
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
 
-            double[] input = { 0.5, 0.25 };
+            double[] input = {0.5, 0.25};
             double[] output;
-            double[] wantedOutput = { 0.25, 0.0625 };
+
+            double[] wantedOutput = new double[input.Length];
+            for (int i=0; i<input.Length; i++)
+                wantedOutput[i] = Math.Sqrt(input[i]);
+
             double learningRate = 0.01;
-            int numberOfTrainingEpochs = 100000;
+            int numberOfTrainingEpochs = 50000;
 
             double error;
             bpn.Run(input, out output);
-            Console.WriteLine("Output before training: {0}", output[1]);
+            for (int i = 0; i < input.Length; i++)
+                Console.WriteLine("Output before training[{0}]: {1}", i, output[i]);
 
             for (int epoch = 0; epoch < numberOfTrainingEpochs; epoch++)
             {
@@ -41,7 +47,8 @@ namespace NeuralNetworkApp
             Console.WriteLine("Error: {0}", error);
 
             bpn.Run(input, out output);
-            Console.WriteLine("Output after training: {0}", output[1]);
+            for (int i = 0; i < input.Length; i++)
+                Console.WriteLine("Output after training[{0}]: {1}", i, output[i]);
 
             Console.ReadLine();
         }

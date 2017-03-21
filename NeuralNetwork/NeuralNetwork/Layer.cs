@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
+
     class Layer
     {
 
         protected readonly int size;
-        private readonly ActivationFunction activationFunction;
+        private readonly IDoubleEvaluatable activationFunction;
 
-        public Layer(int size, ActivationFunction activationFunction)
+        public Layer(int size, IDoubleEvaluatable activationFunction)
         {
             this.size = size;
             this.activationFunction = activationFunction;
@@ -28,7 +29,7 @@ namespace NeuralNetwork
             }
         }
 
-        public ActivationFunction ActivationFunction
+        public IDoubleEvaluatable ActivationFunction
         {
             get
             {
@@ -58,9 +59,9 @@ namespace NeuralNetwork
         {
             thisLayerDeltas = new double[size];
 
-            for(int nodeIndex = 0; nodeIndex < size; nodeIndex++)
+            for(int i = 0; i < size; i++)
             {
-                thisLayerDeltas[nodeIndex] = activationFunction.EvaluateDerivative(input[nodeIndex]) * backPropDeltas[nodeIndex];
+                thisLayerDeltas[i] = activationFunction.EvaluateDerivative(input[i]) * backPropDeltas[i];
             }
         }
     }
