@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ActivationFunction.cs" />
     <Compile Include="BackPropagationNetwork.cs" />
+    <Compile Include="IdentificationData.cs" />
     <Compile Include="Synapse.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

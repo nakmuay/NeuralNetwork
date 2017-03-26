@@ -13,6 +13,7 @@ namespace NeuralNetworkApp
     {
         static void Main(string[] args)
         {
+            /*
             int[] layerSizes = {2, 2, 2};
 
             IDoubleEvaluatable[] activationFunction =  {
@@ -51,6 +52,29 @@ namespace NeuralNetworkApp
                 Console.WriteLine("Output after training[{0}]: {1}", i, output[i]);
 
             Console.ReadLine();
+            */
+
+            double xMin = 0.0;
+            int numSamples = 10;
+            double[,] input = new double[numSamples, 1];
+            double[,] output = new double[numSamples, 1];
+            for (int i = 0; i < numSamples; i++)
+            {
+                input[i, 0] = xMin + i;
+                output[i, 0] = Math.Sin(input[i, 0]);
+            }
+
+            IdentificationData data = new IdentificationData(input, output);
+            Console.WriteLine("Number of input variables: {0}", data.NumInputVariables);
+            Console.WriteLine("Number of samples: {0}", data.NumSamples);
+
+            Console.WriteLine("Input\tOutput");
+            for (int i = 0; i < data.NumSamples; i++)
+            {
+                Console.WriteLine("{0}\t{1}", data.InputData[i, 0], data.OutputData[i, 0]);
+            }
+            Console.ReadLine();
+
         }
     }
 }
