@@ -19,7 +19,7 @@ namespace NeuralNetwork
         private Layer inputLayer;
         private int layerCount;
         private Layer[] layers;
-        private LayerConnection[] layerConnections;
+        private Synapse[] layerConnections;
 
         #endregion
 
@@ -57,10 +57,10 @@ namespace NeuralNetwork
             Console.WriteLine("Creating layer connections ...");
 
             // Create connections between layers
-            layerConnections = new LayerConnection[layerCount];
+            layerConnections = new Synapse[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
-                layerConnections[i] = new LayerConnection(i == 0 ? inputLayer : layers[i - 1], layers[i]);
+                layerConnections[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
             }
         }
 

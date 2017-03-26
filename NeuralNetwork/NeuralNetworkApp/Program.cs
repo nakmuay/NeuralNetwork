@@ -13,7 +13,7 @@ namespace NeuralNetworkApp
     {
         static void Main(string[] args)
         {
-            int[] layerSizes = {2, 3, 2};
+            int[] layerSizes = {2, 2, 2};
 
             IDoubleEvaluatable[] activationFunction =  {
                                                         new None(),
@@ -30,8 +30,8 @@ namespace NeuralNetworkApp
             for (int i=0; i<input.Length; i++)
                 wantedOutput[i] = Math.Sqrt(input[i]);
 
-            double learningRate = 0.01;
-            int numberOfTrainingEpochs = 50000;
+            double learningRate = 0.001;
+            int numberOfTrainingEpochs = 1000000;
 
             double error;
             bpn.Run(input, out output);

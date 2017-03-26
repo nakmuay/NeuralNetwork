@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace NeuralNetwork
 {
 
-    class LayerConnection
+    class Synapse
     {
         private Layer firstLayer;
         private Layer secondLayer;
         private double[,] weightMatrix;
 
-        public LayerConnection(Layer firstLayer, Layer secondLayer)
+        public Synapse(Layer firstLayer, Layer secondLayer)
         {
             this.firstLayer = firstLayer;
             this.secondLayer = secondLayer;
