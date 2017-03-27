@@ -15,7 +15,7 @@ namespace NeuralNetworkApp
         {
             // Create some training data
             double xMin = 0.0;
-            int numSamples = 10;
+            int numSamples = 100;
             double[][] input = new double[numSamples][];
             double[][] output = new double[numSamples][];
             for (int i = 0; i < numSamples; i++)
@@ -30,9 +30,10 @@ namespace NeuralNetworkApp
             IdentificationData data = new IdentificationData(input, output);
 
             // Create net
-            int[] layerSizes = { 1, 2, 2, 1 };
+            int[] layerSizes = { 1, 10, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {
                                                         new None(),
+                                                        new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),

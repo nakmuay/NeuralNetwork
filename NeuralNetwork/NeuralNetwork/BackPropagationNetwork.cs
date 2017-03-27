@@ -19,7 +19,7 @@ namespace NeuralNetwork
         private Layer inputLayer;
         private int layerCount;
         private Layer[] layers;
-        private Synapse[] layerConnections;
+        private Synapse[] synapses;
 
         #endregion
 
@@ -54,13 +54,13 @@ namespace NeuralNetwork
                 layers[i]      = new Layer(layerSizes[i + 1], transferFunctions[i + 1]);
             }
 
-            Console.WriteLine("Creating layer connections ...");
+            Console.WriteLine("Creating synapses ...");
 
-            // Create connections between layers
-            layerConnections = new Synapse[layerCount];
+            // Create synapses (connections) between layers
+            synapses = new Synapse[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
-                layerConnections[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
+                synapses[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
             }
         }
 
@@ -78,7 +78,7 @@ namespace NeuralNetwork
             // Print weight Matrix
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
-                layerConnections[layerIndex].Write();
+                synapses[layerIndex].Write();
             }
         }
 
@@ -93,7 +93,7 @@ namespace NeuralNetwork
             // Run the network
             for (int i = 0; i < layerCount; i++)
             {
-                layerConnections[i].ForwardPropagate((i == 0 ? input : layerOutput[i - 1]), out layerInput[i]);
+                synapses[i].ForwardPropagate((i == 0 ? input : layerOutput[i - 1]), out layerInput[i]);
                 layers[i].Run(layerInput[i], out layerOutput[i]);
             }
 
@@ -129,14 +129,14 @@ namespace NeuralNetwork
             for (int i = lastLayerIndex; i > 0; i--)
             {
                 layers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
-                layerConnections[i].Backpropagate(delta[i], out delta[i - 1]);
+                synapses[i].Backpropagate(delta[i], out delta[i - 1]);
             }
 
             // Update weights
-            for (int i = 0; i < layerConnections.Length; i++)
+            for (int i = 0; i < synapses.Length; i++)
             {
-                double[] connectionInput = (i == 0 ? input : layerOutput[i - 1]);
-                layerConnections[i].UpdateWeights(connectionInput, delta[i], learningRate);
+                double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
+                synapses[i].UpdateWeights(synapseInput, delta[i], learningRate);
             }
 
             return error;
