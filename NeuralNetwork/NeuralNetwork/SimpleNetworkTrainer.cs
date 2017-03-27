@@ -28,7 +28,7 @@ namespace NeuralNetwork
         }
 
 
-        public void Train()
+        public void Train(TrainingOptions options)
         {
             do
             {
@@ -40,6 +40,11 @@ namespace NeuralNetwork
                 }
 
             } while (error > options.MaxError && iterations < options.MaxIterations);
+        }
+
+        public void Train()
+        {
+            Train(options);
         }
 
 
@@ -73,7 +78,7 @@ namespace NeuralNetwork
         {
             learningRate = 0.01;
             maxError = 1.0E-3;
-            maxIterations = 10000000;
+            maxIterations = 1000000;
         }
 
 
@@ -83,6 +88,10 @@ namespace NeuralNetwork
             {
                 return learningRate;
             }
+            set
+            {
+                learningRate = value;
+            }
         }
 
         public double MaxError
@@ -91,6 +100,10 @@ namespace NeuralNetwork
             {
                 return maxError;
             }
+            set
+            {
+                maxError = value;
+            }
         }
 
         public int MaxIterations
@@ -98,6 +111,10 @@ namespace NeuralNetwork
             get
             {
                 return maxIterations;
+            }
+            set
+            {
+                maxIterations = value;
             }
         }
 

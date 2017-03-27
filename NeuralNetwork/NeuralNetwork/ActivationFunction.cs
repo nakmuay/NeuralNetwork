@@ -31,7 +31,7 @@ namespace NeuralNetwork
         }
     }
 
-    public class SigmoidTransferFunction : IDoubleEvaluatable
+    public class SigmoidActivationFunction : IDoubleEvaluatable
     {
         public double Evaluate(double value)
         {
@@ -41,6 +41,19 @@ namespace NeuralNetwork
         public double EvaluateDerivative(double value)
         {
             return Evaluate(value) * (1 - Evaluate(value));
+        }
+    }
+
+    public class TanhActivationFunction : IDoubleEvaluatable
+    {
+        public double Evaluate(double value)
+        {
+            return Math.Tanh(value);
+        }
+
+        public double EvaluateDerivative(double value)
+        {
+            return 1 - Math.Pow(Evaluate(value), 2);
         }
     }
 
