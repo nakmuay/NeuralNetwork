@@ -54,6 +54,7 @@ namespace NeuralNetworkApp
             Console.ReadLine();
             */
 
+            // Create some training data
             double xMin = 0.0;
             int numSamples = 10;
             double[][] input = new double[numSamples][];
@@ -68,14 +69,24 @@ namespace NeuralNetworkApp
             }
 
             IdentificationData data = new IdentificationData(input, output);
-            Console.WriteLine("Number of input variables: {0}", data.NumInputVariables);
-            Console.WriteLine("Number of samples: {0}", data.NumSamples);
 
-            Console.WriteLine("Input\tOutput");
-            for (int i = 0; i < data.NumSamples; i++)
-            {
-                Console.WriteLine("{0}\t{1}", data.InputData[i][0], data.OutputData[i][0]);
-            }
+            // Create net
+            int[] layerSizes = { 1, 5, 5, 1 };
+            IDoubleEvaluatable[] activationFunction =  {
+                                                        new None(),
+                                                        new SigmoidTransferFunction(),
+                                                        new SigmoidTransferFunction(),
+                                                        new SigmoidTransferFunction(),
+                                                        };
+
+            BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
+
+            // Create network trainer
+            SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
+            trainer.Train();
+
+            Console.WriteLine("Training error: {0}", trainer.Error);
+            Console.WriteLine("Training iterations: {0}", trainer.Iterations);
             Console.ReadLine();
 
         }

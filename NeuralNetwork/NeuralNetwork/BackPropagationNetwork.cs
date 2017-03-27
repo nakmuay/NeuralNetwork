@@ -31,7 +31,7 @@ namespace NeuralNetwork
                 throw new ArgumentException("Cannot create a network with the provided parameters.");
             }
 
-            Console.WriteLine("Creating layers...");
+            Console.WriteLine("Creating layers ...");
 
             // Initialize variables
             layerCount = layerSizes.Length - 1;
@@ -100,7 +100,7 @@ namespace NeuralNetwork
             output = layerOutput[lastLayerIndex];
         }
 
-        public void Train(double[] input, double[] wantedOutput, double learningRate, out double error)
+        public double Train(double[] input, double[] wantedOutput, double learningRate)
         {
             // Validate input
             if (input.Length != inputLayer.Size)
@@ -118,7 +118,7 @@ namespace NeuralNetwork
             Run(input, out output);
 
             // Calculate error for output layer
-            error = 0.0;
+            double error = 0.0;
             for (int i = 0; i < layers[lastLayerIndex].Size; i++)
             {
                 delta[lastLayerIndex][i] = (output[i] - wantedOutput[i]);
@@ -138,6 +138,8 @@ namespace NeuralNetwork
                 double[] connectionInput = (i == 0 ? input : layerOutput[i - 1]);
                 layerConnections[i].UpdateWeights(connectionInput, delta[i], learningRate);
             }
+
+            return error;
         }
     }
 }

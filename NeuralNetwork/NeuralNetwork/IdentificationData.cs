@@ -28,7 +28,7 @@ namespace NeuralNetwork
             }
         }
 
-        public double NumInputVariables
+        public int NumInputVariables
         {
             get
             {
@@ -44,7 +44,7 @@ namespace NeuralNetwork
             }
         }
 
-        public double NumOutputVariables
+        public int NumOutputVariables
         {
             get
             {
@@ -52,7 +52,7 @@ namespace NeuralNetwork
             }
         }
 
-        public double NumSamples
+        public int NumSamples
         {
             get
             {
