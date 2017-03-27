@@ -56,12 +56,15 @@ namespace NeuralNetworkApp
 
             double xMin = 0.0;
             int numSamples = 10;
-            double[,] input = new double[numSamples, 1];
-            double[,] output = new double[numSamples, 1];
+            double[][] input = new double[numSamples][];
+            double[][] output = new double[numSamples][];
             for (int i = 0; i < numSamples; i++)
             {
-                input[i, 0] = xMin + i;
-                output[i, 0] = Math.Sin(input[i, 0]);
+                input[i] = new double[1];
+                input[i][0] = xMin + i;
+
+                output[i] = new double[1];
+                output[i][0] = Math.Sin(input[i][0]);
             }
 
             IdentificationData data = new IdentificationData(input, output);
@@ -71,7 +74,7 @@ namespace NeuralNetworkApp
             Console.WriteLine("Input\tOutput");
             for (int i = 0; i < data.NumSamples; i++)
             {
-                Console.WriteLine("{0}\t{1}", data.InputData[i, 0], data.OutputData[i, 0]);
+                Console.WriteLine("{0}\t{1}", data.InputData[i][0], data.OutputData[i][0]);
             }
             Console.ReadLine();
 

@@ -9,10 +9,10 @@ namespace NeuralNetwork
     public class IdentificationData
     {
 
-        public double[,] inputData;
-        public double[,] outputData;
+        public double[][] inputData;
+        public double[][] outputData;
 
-        public IdentificationData(double[,] inputData, double[,] outputData)
+        public IdentificationData(double[][] inputData, double[][] outputData)
         {
             this.inputData = inputData;
             this.outputData = outputData;
@@ -20,7 +20,7 @@ namespace NeuralNetwork
 
         #region properties
 
-        public double[,] InputData
+        public double[][] InputData
         {
             get
             {
@@ -32,11 +32,11 @@ namespace NeuralNetwork
         {
             get
             {
-                return inputData.GetLength(1);
+                return inputData[0].Length;
             }
         }
 
-        public double[,] OutputData
+        public double[][] OutputData
         {
             get
             {
@@ -48,7 +48,7 @@ namespace NeuralNetwork
         {
             get
             {
-                return outputData.GetLength(1);
+                return outputData[0].Length;
             }
         }
 
@@ -56,7 +56,7 @@ namespace NeuralNetwork
         {
             get
             {
-                return inputData.GetLength(0);
+                return inputData.Length;
             }
         }
 
