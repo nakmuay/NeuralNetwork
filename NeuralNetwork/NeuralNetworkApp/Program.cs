@@ -15,7 +15,7 @@ namespace NeuralNetworkApp
         {
             // Create some training data
             double xMin = 0.0;
-            int numSamples = 100;
+            int numSamples = 63;
             double[][] input = new double[numSamples][];
             double[][] output = new double[numSamples][];
             for (int i = 0; i < numSamples; i++)
@@ -30,10 +30,9 @@ namespace NeuralNetworkApp
             IdentificationData data = new IdentificationData(input, output);
 
             // Create net
-            int[] layerSizes = { 1, 10, 10, 10, 1 };
+            int[] layerSizes = { 1, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {
                                                         new None(),
-                                                        new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
@@ -43,8 +42,6 @@ namespace NeuralNetworkApp
 
             // Create network trainer
             TrainingOptions opt = new TrainingOptions();
-            opt.MaxError = 1.0E-6;
-            //opt.MaxIterations = 200000;
 
             SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
             trainer.Train(opt);

@@ -11,7 +11,6 @@ namespace NeuralNetwork
 
         private BackPropagationNetwork net;
         private IdentificationData data;
-        private TrainingOptions options;
 
         private int iterations;
         private double error;
@@ -21,7 +20,6 @@ namespace NeuralNetwork
         {
             this.net = net;
             this.data = data;
-            this.options = new TrainingOptions();
 
             this.iterations = 0;
             this.errorHistory = new double[data.NumSamples];
@@ -39,11 +37,19 @@ namespace NeuralNetwork
                     error += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate);
                 }
 
+                // Print some intermediate information
+                if (iterations % 100 == 0)
+                {
+                    Console.WriteLine("Training epoch: {0}, error: {1}", iterations, error);
+                }
+
             } while (error > options.MaxError && iterations < options.MaxIterations);
         }
 
         public void Train()
         {
+            // Pass default training options
+            TrainingOptions options = new TrainingOptions();
             Train(options);
         }
 

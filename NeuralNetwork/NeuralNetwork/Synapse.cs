@@ -12,22 +12,22 @@ namespace NeuralNetwork
         private Layer firstLayer;
         private Layer secondLayer;
         private double[,] weightMatrix;
+        private Random rnd;
 
         public Synapse(Layer firstLayer, Layer secondLayer)
         {
             this.firstLayer = firstLayer;
             this.secondLayer = secondLayer;
+            this.rnd = new Random();
 
-            // Allocate matrix size
-            weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
-
-            Random rnd = new Random();
+        // Allocate matrix size
+        weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
 
             for (int i = 0; i < secondLayer.Size; i++)
             {
                 for (int j = 0; j < firstLayer.Size + 1; j++)
                 {
-                    weightMatrix[i, j] = rnd.NextDouble();
+                    weightMatrix[i, j] = initializeWeight(firstLayer.ActivationFunction.MeanActivation());
                 }
             }
         }
@@ -109,6 +109,11 @@ namespace NeuralNetwork
             }
 
             return transposedWeightMatrix;
+        }
+
+        private double initializeWeight(double mean)
+        {
+            return rnd.NextDouble() - mean;
         }
     }
 }

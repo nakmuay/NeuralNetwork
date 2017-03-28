@@ -12,6 +12,12 @@ namespace NeuralNetwork
         T Evaluate(T value);
 
         T EvaluateDerivative(T value);
+
+        T MaxActivation();
+
+        T MinActivation();
+
+        T MeanActivation();
     }
 
     public interface IDoubleEvaluatable : IEvaluatable<double>
@@ -29,6 +35,21 @@ namespace NeuralNetwork
         {
             return 1.0;
         }
+
+        public double MaxActivation()
+        {
+            return Double.MaxValue;
+        }
+
+        public double MinActivation()
+        {
+            return Double.MinValue;
+        }
+
+        public double MeanActivation()
+        {
+            return 0.0;
+        }
     }
 
     public class SigmoidActivationFunction : IDoubleEvaluatable
@@ -42,6 +63,21 @@ namespace NeuralNetwork
         {
             return Evaluate(value) * (1 - Evaluate(value));
         }
+
+        public double MaxActivation()
+        {
+            return 1.0;
+        }
+
+        public double MinActivation()
+        {
+            return 0.0;
+        }
+
+        public double MeanActivation()
+        {
+            return 0.5;
+        }
     }
 
     public class TanhActivationFunction : IDoubleEvaluatable
@@ -54,6 +90,21 @@ namespace NeuralNetwork
         public double EvaluateDerivative(double value)
         {
             return 1 - Math.Pow(Evaluate(value), 2);
+        }
+
+        public double MaxActivation()
+        {
+            return 1.0;
+        }
+
+        public double MinActivation()
+        {
+            return -1.0;
+        }
+
+        public double MeanActivation()
+        {
+            return 0.0;
         }
     }
 
