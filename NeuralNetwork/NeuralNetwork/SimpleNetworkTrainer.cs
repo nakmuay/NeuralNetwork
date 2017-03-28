@@ -34,7 +34,7 @@ namespace NeuralNetwork
                 iterations++; error = 0;
                 for (int i = 0; i < data.NumSamples; i++)
                 {
-                    error += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate);
+                    error += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
                 }
 
                 // Print some intermediate information
@@ -76,6 +76,7 @@ namespace NeuralNetwork
     {
 
         private double learningRate;
+        private double momentum;
 
         private double maxError;
         private int maxIterations;
@@ -83,6 +84,7 @@ namespace NeuralNetwork
         public TrainingOptions()
         {
             learningRate = 0.01;
+            momentum = 0.05;
             maxError = 1.0E-3;
             maxIterations = 1000000;
         }
@@ -97,6 +99,18 @@ namespace NeuralNetwork
             set
             {
                 learningRate = value;
+            }
+        }
+
+        public double Momentum
+        {
+            get
+            {
+                return momentum;
+            }
+            set
+            {
+                momentum = value;
             }
         }
 

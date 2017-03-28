@@ -100,7 +100,7 @@ namespace NeuralNetwork
             output = layerOutput[lastLayerIndex];
         }
 
-        public double Train(double[] input, double[] wantedOutput, double learningRate)
+        public double Train(double[] input, double[] wantedOutput, double learningRate, double momentum)
         {
             // Validate input
             if (input.Length != inputLayer.Size)
@@ -136,7 +136,7 @@ namespace NeuralNetwork
             for (int i = 0; i < synapses.Length; i++)
             {
                 double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
-                synapses[i].UpdateWeights(synapseInput, delta[i], learningRate);
+                synapses[i].UpdateWeights(synapseInput, delta[i], learningRate, momentum);
             }
 
             return error;

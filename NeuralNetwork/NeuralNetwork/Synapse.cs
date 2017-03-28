@@ -12,6 +12,7 @@ namespace NeuralNetwork
         private Layer firstLayer;
         private Layer secondLayer;
         private double[,] weightMatrix;
+        private double[,] previousWeightDelta;
         private Random rnd;
 
         public Synapse(Layer firstLayer, Layer secondLayer)
@@ -20,9 +21,8 @@ namespace NeuralNetwork
             this.secondLayer = secondLayer;
             this.rnd = new Random();
 
-        // Allocate matrix size
-        weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
-
+            // Allocate weight matrix
+            weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
             for (int i = 0; i < secondLayer.Size; i++)
             {
                 for (int j = 0; j < firstLayer.Size + 1; j++)
@@ -30,6 +30,9 @@ namespace NeuralNetwork
                     weightMatrix[i, j] = initializeWeight(firstLayer.ActivationFunction.MeanActivation());
                 }
             }
+
+            // Allocate weight delta matrices
+            previousWeightDelta = new double[secondLayer.Size, firstLayer.Size];
         }
 
         public void Write()
@@ -81,14 +84,20 @@ namespace NeuralNetwork
             }
         }
 
-        public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate)
+        public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate, double momentum)
         {
+            // Declare local variables
+            double weightDelta = 0.0;
+
             // Update weights
             for (int i = 0; i < secondLayer.Size; i++)
             {
                 for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    weightMatrix[i, j] -=  learningRate * deltas[i] * prevLayerOutput[j];
+                    weightDelta = learningRate * deltas[i] * prevLayerOutput[j] + momentum * previousWeightDelta[i, j];
+                    weightMatrix[i, j] -= weightDelta;
+
+                    previousWeightDelta[i, j] = weightDelta;
                 }
 
                 // Update deltas

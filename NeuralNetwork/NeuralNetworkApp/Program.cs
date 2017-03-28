@@ -44,6 +44,8 @@ namespace NeuralNetworkApp
             TrainingOptions opt = new TrainingOptions();
 
             SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
+            opt.MaxError = 1.0E-2;
+            opt.Momentum = 0.5;
             trainer.Train(opt);
 
             Console.WriteLine("Training error: {0}", trainer.Error);
