@@ -13,6 +13,7 @@ namespace NeuralNetwork
         private Layer secondLayer;
         private double[,] weightMatrix;
         private double[,] previousWeightDelta;
+        private double[] previousBiasDelta;
         private Random rnd;
 
         public Synapse(Layer firstLayer, Layer secondLayer)
@@ -31,8 +32,9 @@ namespace NeuralNetwork
                 }
             }
 
-            // Allocate weight delta matrices
+            // Allocate delta matrices
             previousWeightDelta = new double[secondLayer.Size, firstLayer.Size];
+            previousBiasDelta = new double[secondLayer.Size];
         }
 
         public void Write()
@@ -88,6 +90,7 @@ namespace NeuralNetwork
         {
             // Declare local variables
             double weightDelta = 0.0;
+            double biasDelta = 0.0;
 
             // Update weights
             for (int i = 0; i < secondLayer.Size; i++)
@@ -101,7 +104,9 @@ namespace NeuralNetwork
                 }
 
                 // Update deltas
-                weightMatrix[i, weightMatrix.GetLength(1) - 1] -= learningRate * deltas[i];
+                biasDelta = learningRate * deltas[i] + momentum * previousBiasDelta[i];
+                weightMatrix[i, weightMatrix.GetLength(1) - 1] -= biasDelta;
+                previousBiasDelta[i] = biasDelta;
             }
         }
 

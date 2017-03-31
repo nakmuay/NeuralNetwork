@@ -88,7 +88,7 @@ namespace NeuralNetwork
         public TrainingOptions()
         {
             learningRate = 0.01;
-            momentum = 0.05;
+            momentum = 1.0E-2;
             maxError = 1.0E-3;
             maxIterations = 1000000;
         }
