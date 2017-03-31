@@ -13,7 +13,7 @@ namespace NeuralNetwork
         private IdentificationData data;
 
         private int iterations;
-        private double error;
+        private double errorSum;
         private double[] errorHistory;
 
         public SimpleNetworkTrainer(BackPropagationNetwork net, IdentificationData data)
@@ -31,19 +31,19 @@ namespace NeuralNetwork
             do
             {
                 // Prepare to train epoch
-                iterations++; error = 0;
+                iterations++; errorSum = 0;
                 for (int i = 0; i < data.NumSamples; i++)
                 {
-                    error += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
+                    errorSum += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
                 }
 
                 // Print some intermediate information
                 if (iterations % 100 == 0)
                 {
-                    Console.WriteLine("Training epoch: {0}, error: {1}", iterations, error);
+                    Console.WriteLine("Training epoch: {0}, error: {1}", iterations, errorSum);
                 }
 
-            } while (error > options.MaxError && iterations < options.MaxIterations);
+            } while (errorSum > options.MaxError && iterations < options.MaxIterations);
         }
 
         public void Train()
@@ -54,11 +54,13 @@ namespace NeuralNetwork
         }
 
 
-        public double Error
+        #region properties
+
+        public double ErrorSum
         {
             get
             {
-                return this.error;
+                return this.errorSum;
             }
         }
 
@@ -69,6 +71,8 @@ namespace NeuralNetwork
                 return this.iterations;
             }
         }
+
+        #endregion
 
     }
 
@@ -89,6 +93,8 @@ namespace NeuralNetwork
             maxIterations = 1000000;
         }
 
+
+        #region properties
 
         public double LearningRate
         {
@@ -137,6 +143,8 @@ namespace NeuralNetwork
                 maxIterations = value;
             }
         }
+
+        #endregion
 
     }
 

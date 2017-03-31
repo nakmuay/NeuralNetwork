@@ -31,24 +31,23 @@ namespace NeuralNetworkApp
 
             // Create net
             int[] layerSizes = { 1, 10, 10, 1 };
-            IDoubleEvaluatable[] activationFunction =  {
-                                                        new None(),
+            IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
-                                                        new TanhActivationFunction(),
-                                                        };
+                                                        new TanhActivationFunction()};
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
 
             // Create network trainer
-            TrainingOptions opt = new TrainingOptions();
-
             SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
+
+            // Create trainging options
+            TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
             opt.Momentum = 0.5;
             trainer.Train(opt);
 
-            Console.WriteLine("Training error: {0}", trainer.Error);
+            Console.WriteLine("Training error: {0}", trainer.ErrorSum);
             Console.WriteLine("Training iterations: {0}", trainer.Iterations);
             Console.ReadLine();
 
