@@ -9,23 +9,22 @@ namespace NeuralNetwork
 
     public interface IEvaluatable<T>
     {
+
         T Evaluate(T value);
 
         T EvaluateDerivative(T value);
 
-        T MaxActivation();
-
-        T MinActivation();
-
-        T MeanActivation();
     }
+
 
     public interface IDoubleEvaluatable : IEvaluatable<double>
     {
     }
 
+
     public class None : IDoubleEvaluatable
     {
+
         public double Evaluate(double value)
         {
             return value;
@@ -36,24 +35,12 @@ namespace NeuralNetwork
             return 1.0;
         }
 
-        public double MaxActivation()
-        {
-            return Double.MaxValue;
-        }
-
-        public double MinActivation()
-        {
-            return Double.MinValue;
-        }
-
-        public double MeanActivation()
-        {
-            return 0.0;
-        }
     }
+
 
     public class SigmoidActivationFunction : IDoubleEvaluatable
     {
+
         public double Evaluate(double value)
         {
             return 1.0 / (1.0 + Math.Exp(-value));
@@ -64,24 +51,12 @@ namespace NeuralNetwork
             return Evaluate(value) * (1 - Evaluate(value));
         }
 
-        public double MaxActivation()
-        {
-            return 1.0;
-        }
-
-        public double MinActivation()
-        {
-            return 0.0;
-        }
-
-        public double MeanActivation()
-        {
-            return 0.5;
-        }
     }
+
 
     public class TanhActivationFunction : IDoubleEvaluatable
     {
+
         public double Evaluate(double value)
         {
             return Math.Tanh(value);
@@ -92,20 +67,57 @@ namespace NeuralNetwork
             return 1 - Math.Pow(Evaluate(value), 2);
         }
 
-        public double MaxActivation()
+    }
+
+
+    public class RectifiedLinearUnit : IDoubleEvaluatable
+    {
+
+        public double Evaluate(double value)
+        {
+            return Math.Max(0.0, value);
+        }
+
+        public double EvaluateDerivative(double value)
+        {
+            return value > 0 ? 1 : 0.0;
+        }
+
+    }
+
+
+    public class LeakyRectifiedLinearUnit : IDoubleEvaluatable
+    {
+
+        private double positiveHalfPlaneSlope = 1.0;
+        private double negativeHalfPlaneSlope = 0.01;
+
+        public double Evaluate(double value)
+        {
+            return Math.Max(negativeHalfPlaneSlope * value, value);
+        }
+
+        public double EvaluateDerivative(double value)
+        {
+            return value > 0 ? positiveHalfPlaneSlope : negativeHalfPlaneSlope;
+        }
+
+    }
+
+
+    public class Linear : IDoubleEvaluatable
+    {
+
+        public double Evaluate(double value)
+        {
+            return value;
+        }
+
+        public double EvaluateDerivative(double value)
         {
             return 1.0;
         }
 
-        public double MinActivation()
-        {
-            return -1.0;
-        }
-
-        public double MeanActivation()
-        {
-            return 0.0;
-        }
     }
 
 }

@@ -30,7 +30,7 @@ namespace NeuralNetworkApp
             IdentificationData data = new IdentificationData(input, output);
 
             // Create net
-            int[] layerSizes = { 1, 18, 18, 1 };
+            int[] layerSizes = { 1, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
@@ -43,11 +43,19 @@ namespace NeuralNetworkApp
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
+            opt.LearningRate = 0.02;
+            opt.Momentum = 0.001;
             opt.MaxError = 1.0E-2;
+
+            bpn.Write();
             trainer.Train(opt);
 
             Console.WriteLine("Training error: {0}", trainer.ErrorSum);
             Console.WriteLine("Training iterations: {0}", trainer.Iterations);
+
+            Console.WriteLine();
+            bpn.Write();
+
             Console.ReadLine();
 
         }

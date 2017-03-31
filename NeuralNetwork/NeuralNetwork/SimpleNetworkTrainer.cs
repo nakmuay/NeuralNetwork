@@ -40,7 +40,7 @@ namespace NeuralNetwork
                 // Print some intermediate information
                 if (iterations % 100 == 0)
                 {
-                    Console.WriteLine("Training epoch: {0}, error: {1}", iterations, errorSum);
+                    Console.WriteLine("Training epoch: {0}, error: {1:E2}", iterations, errorSum);
                 }
 
             } while (errorSum > options.MaxError && iterations < options.MaxIterations);
@@ -87,8 +87,8 @@ namespace NeuralNetwork
 
         public TrainingOptions()
         {
-            learningRate = 0.01;
-            momentum = 1.0E-2;
+            learningRate = 1.0E-2;
+            momentum = 1.0E-3;
             maxError = 1.0E-3;
             maxIterations = 1000000;
         }

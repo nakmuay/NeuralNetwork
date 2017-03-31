@@ -13,7 +13,10 @@ namespace NeuralNetwork
         private Layer secondLayer;
         private double[,] weightMatrix;
         private double[,] previousWeightDelta;
+
+        private double[] bias;
         private double[] previousBiasDelta;
+
         private Random rnd;
 
         public Synapse(Layer firstLayer, Layer secondLayer)
@@ -23,13 +26,16 @@ namespace NeuralNetwork
             this.rnd = new Random();
 
             // Allocate weight matrix
-            weightMatrix = new double[secondLayer.Size, firstLayer.Size + 1];
+            weightMatrix = new double[secondLayer.Size, firstLayer.Size];
+            bias = new double[secondLayer.Size];
             for (int i = 0; i < secondLayer.Size; i++)
             {
-                for (int j = 0; j < firstLayer.Size + 1; j++)
+                for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    weightMatrix[i, j] = initializeWeight(firstLayer.ActivationFunction.MeanActivation());
+                    weightMatrix[i, j] = initializeWeight(firstLayer.Size);
                 }
+
+                bias[i] = initializeBias(firstLayer.Size);
             }
 
             // Allocate delta matrices
@@ -41,9 +47,10 @@ namespace NeuralNetwork
         {
             for (int i = 0; i < secondLayer.Size; i++)
             {
-                for (int j = 0; j < firstLayer.Size + 1; j++)
+                for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    Console.Write(String.Format("{0} ", weightMatrix[i, j]));
+                    // Console.Write(String.Format("{0:0.##E+0} ", weightMatrix[i, j]));
+                    Console.Write(String.Format("{0:E2} ", weightMatrix[i, j]));
                 }
                 Console.WriteLine("\n");
             }
@@ -61,10 +68,8 @@ namespace NeuralNetwork
                     dotProduct += weightMatrix[i, j] * input[j];
                 }
 
-                // TODO: [martin, 2017-03-20] Extract bias to separate field. There is no point to keep it as part of the weight matrix until the code is vectorized.
                 // Add bias term
-                dotProduct += weightMatrix[i, firstLayer.Size];
-                output[i] = dotProduct;
+                output[i] = dotProduct + bias[i];
             }
         }
 
@@ -105,8 +110,8 @@ namespace NeuralNetwork
 
                 // Update deltas
                 biasDelta = learningRate * deltas[i] + momentum * previousBiasDelta[i];
-                weightMatrix[i, weightMatrix.GetLength(1) - 1] -= biasDelta;
                 previousBiasDelta[i] = biasDelta;
+                bias[i] -= biasDelta;
             }
         }
 
@@ -125,9 +130,15 @@ namespace NeuralNetwork
             return transposedWeightMatrix;
         }
 
-        private double initializeWeight(double mean)
+        private double initializeWeight(int numberOfInputs)
         {
-            return rnd.NextDouble() - mean;
+            // return (rnd.NextDouble() - 0.5) / Math.Sqrt(numberOfInputs);
+            return rnd.NextDouble() / 2;
+        }
+
+        private double initializeBias(int numberOfInputs)
+        {
+            return (0.5 - rnd.NextDouble()) / 2;
         }
     }
 }
