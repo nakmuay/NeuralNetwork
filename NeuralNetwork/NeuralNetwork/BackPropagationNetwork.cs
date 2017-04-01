@@ -98,6 +98,17 @@ namespace NeuralNetwork
             }
         }
 
+        public void Run(IdentificationData idInput, out IdentificationData idOutput)
+        {
+            double[][] output = new double[idInput.NumSamples][];
+            for (int i = 0; i < idInput.NumSamples; i++)
+            {
+                Run(idInput.InputData[i], out output[i]);
+            }
+
+            idOutput = new IdentificationData(idInput.InputData, output);
+        }
+
         public void Run(double[] input, out double[] output)
         {
             // Validate input

@@ -43,11 +43,15 @@ namespace NeuralNetworkApp
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
-            opt.LearningRate = 0.05;
+            opt.LearningRate = 0.02;
             opt.Momentum = 0.001;
             opt.MaxError = 1.0E-2;
 
             bpn.Write();
+
+            IdentificationData outputIdData;
+            bpn.Run(data, out outputIdData);
+
             trainer.Train(opt);
 
             Console.WriteLine("Training error: {0}", trainer.ErrorSum);

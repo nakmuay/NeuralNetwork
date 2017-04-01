@@ -12,9 +12,14 @@ namespace NeuralNetwork
         public double[][] inputData;
         public double[][] outputData;
 
-        public IdentificationData(double[][] inputData, double[][] outputData)
+        public IdentificationData(double[][] inputData)
         {
             this.inputData = inputData;
+            this.outputData = new double[inputData.Length][];
+        }
+
+        public IdentificationData(double[][] inputData, double[][] outputData) : this(inputData)
+        {
             this.outputData = outputData;
         }
 
