@@ -11,6 +11,7 @@ namespace NeuralNetwork
     {
         private Layer firstLayer;
         private Layer secondLayer;
+
         private double[,] weightMatrix;
         private double[,] previousWeightDelta;
 
@@ -43,7 +44,6 @@ namespace NeuralNetwork
             {
                 for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    // Console.Write(String.Format("{0:0.##E+0} ", weightMatrix[i, j]));
                     Console.Write(String.Format("{0:E2} ", weightMatrix[i, j]));
                 }
                 Console.WriteLine("\n");
@@ -98,7 +98,6 @@ namespace NeuralNetwork
                 {
                     weightDelta = learningRate * deltas[i] * prevLayerOutput[j] + momentum * previousWeightDelta[i, j];
                     weightMatrix[i, j] -= weightDelta;
-
                     previousWeightDelta[i, j] = weightDelta;
                 }
 

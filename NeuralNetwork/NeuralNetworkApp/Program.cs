@@ -24,16 +24,17 @@ namespace NeuralNetworkApp
                 input[i][0] = xMin + i/10.0;
 
                 output[i] = new double[1];
-                output[i][0] = Math.Pow(input[i][0], 2.0);
+                output[i][0] = Math.Sin(input[i][0]);
             }
 
             IdentificationData data = new IdentificationData(input, output);
 
             // Create net
-            int[] layerSizes = { 1, 5, 1 };
+            int[] layerSizes = { 1, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
-                                                        new SigmoidActivationFunction(),
-                                                        new Linear()};
+                                                        new TanhActivationFunction(),
+                                                        new RectifiedLinearUnit(),
+                                                        new TanhActivationFunction()};
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
 
@@ -42,8 +43,8 @@ namespace NeuralNetworkApp
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
-            opt.LearningRate = 0.01;
-            opt.Momentum = 0.01;
+            opt.LearningRate = 0.05;
+            opt.Momentum = 0.001;
             opt.MaxError = 1.0E-2;
 
             bpn.Write();
