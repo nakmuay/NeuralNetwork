@@ -30,7 +30,7 @@ namespace NeuralNetworkApp
             IdentificationData data = new IdentificationData(input, output);
 
             // Create net
-            int[] layerSizes = { 1, 10, 10, 1 };
+            int[] layerSizes = { 1, 5, 5, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),

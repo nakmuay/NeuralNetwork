@@ -69,6 +69,23 @@ namespace NeuralNetwork
 
     }
 
+    public class ModifiedTanhActivationFunction : IDoubleEvaluatable
+    {
+
+        private double scale = 1.7159;
+        private double periodScale = 2/3;
+
+        public double Evaluate(double value)
+        {
+            return scale * Math.Tanh(periodScale * value);
+        }
+
+        public double EvaluateDerivative(double value)
+        {
+            return scale * periodScale * (1 - Math.Pow(Evaluate(value), 2));
+        }
+
+    }
 
     public class RectifiedLinearUnit : IDoubleEvaluatable
     {

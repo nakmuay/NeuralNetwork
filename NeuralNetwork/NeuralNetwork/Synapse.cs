@@ -133,7 +133,7 @@ namespace NeuralNetwork
         private double initializeWeight(int numberOfInputs)
         {
             // return (rnd.NextDouble() - 0.5) / Math.Sqrt(numberOfInputs);
-            return rnd.NextDouble() / 2;
+            return rnd.NextDouble() * 2;
         }
 
         private double initializeBias(int numberOfInputs)
