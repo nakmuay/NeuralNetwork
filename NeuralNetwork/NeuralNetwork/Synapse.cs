@@ -35,7 +35,7 @@ namespace NeuralNetwork
             previousBiasDelta = new double[secondLayer.Size];
 
             // Initialize weights and biases
-            Initialize(firstLayer.Size);
+            initialize(firstLayer.Size);
         }
 
         public void Write()
@@ -108,7 +108,38 @@ namespace NeuralNetwork
             }
         }
 
-        public void Initialize(int numberOfInputs)
+        public void Nudge()
+        {
+            nudgeWeights();
+            nudgeBiases();
+        }
+
+        private void nudgeWeights()
+        {
+            for (int i = 0; i < secondLayer.Size; i++)
+            {
+                for (int j = 0; j < firstLayer.Size; j++)
+                {
+                    double std = 0.01 * weightMatrix[i, j];
+                    double mean = weightMatrix[i, j];
+                    GaussianGenerator gaussianRand = new GaussianGenerator(mean, std, rng);
+                    weightMatrix[i, j] = gaussianRand.NextDouble();
+                }
+            }
+        }
+
+        private void nudgeBiases()
+        {
+            for (int i = 0; i < secondLayer.Size; i++)
+            {
+                double std = 0.01 * bias[i];
+                double mean = bias[i];
+                GaussianGenerator gaussianRand = new GaussianGenerator(mean, std, rng);
+                bias[i] = gaussianRand.NextDouble();
+            }
+        }
+
+        private void initialize(int numberOfInputs)
         {
             initializeWeights(numberOfInputs);
             initializeBiases(numberOfInputs);

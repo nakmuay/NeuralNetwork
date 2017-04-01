@@ -33,7 +33,7 @@ namespace NeuralNetworkApp
             int[] layerSizes = { 1, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
-                                                        new RectifiedLinearUnit(),
+                                                        new TanhActivationFunction(),
                                                         new TanhActivationFunction()};
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);

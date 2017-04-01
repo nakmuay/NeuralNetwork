@@ -58,10 +58,7 @@ namespace NeuralNetwork
 
             // Create synapses (connections) between layers
             synapses = new Synapse[layerCount];
-            for (int i = 0; i < layerCount; i++)
-            {
-                synapses[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
-            }
+            InitializeSynapses();
         }
 
         #region properties
@@ -79,6 +76,25 @@ namespace NeuralNetwork
             for (int layerIndex = 0; layerIndex < layerCount; layerIndex++)
             {
                 synapses[layerIndex].Write();
+            }
+        }
+
+        public void InitializeSynapses()
+        {
+            // Create synapses (connections) between layers
+            synapses = new Synapse[layerCount];
+            for (int i = 0; i < layerCount; i++)
+            {
+                synapses[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
+            }
+        }
+
+        public void NudgeSynapses()
+        {
+            // Create synapses (connections) between layers
+            for (int i = 0; i < synapses.Length; i++)
+            {
+                synapses[i].Nudge();
             }
         }
 

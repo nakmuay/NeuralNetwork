@@ -14,7 +14,7 @@ namespace NeuralNetwork
 
         private int iterations;
         private double errorSum;
-        private double[] errorHistory;
+        private List<double> errorSumHistory;
 
         public SimpleNetworkTrainer(BackPropagationNetwork net, IdentificationData data)
         {
@@ -22,7 +22,7 @@ namespace NeuralNetwork
             this.data = data;
 
             this.iterations = 0;
-            this.errorHistory = new double[data.NumSamples];
+            errorSumHistory = new List<double>();
         }
 
 
@@ -42,6 +42,16 @@ namespace NeuralNetwork
                 {
                     Console.WriteLine("Training epoch: {0}, error: {1:E2}", iterations, errorSum);
                 }
+
+                /*
+                if (iterations % 10000 == 0 && errorSum > options.MaxError)
+                {
+                    Console.WriteLine("Nudging synapse weights ...");
+                    net.NudgeSynapses();
+                }
+                */
+
+                errorSumHistory.Add(errorSum);
 
             } while (errorSum > options.MaxError && iterations < options.MaxIterations);
         }
