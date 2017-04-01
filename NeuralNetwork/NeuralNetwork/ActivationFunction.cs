@@ -48,7 +48,7 @@ namespace NeuralNetwork
 
         public double EvaluateDerivative(double value)
         {
-            return Evaluate(value) * (1 - Evaluate(value));
+            return Evaluate(value) * (1.0 - Evaluate(value));
         }
 
     }
@@ -64,7 +64,7 @@ namespace NeuralNetwork
 
         public double EvaluateDerivative(double value)
         {
-            return 1 - Math.Pow(Evaluate(value), 2);
+            return 1 - Math.Pow(Evaluate(value), 2.0);
         }
 
     }
@@ -73,7 +73,7 @@ namespace NeuralNetwork
     {
 
         private double scale = 1.7159;
-        private double periodScale = 2/3;
+        private double periodScale = 2.0/3.0;
 
         public double Evaluate(double value)
         {
@@ -82,7 +82,7 @@ namespace NeuralNetwork
 
         public double EvaluateDerivative(double value)
         {
-            return scale * periodScale * (1 - Math.Pow(Evaluate(value), 2));
+            return scale * periodScale * (1.0 - Math.Pow(Evaluate(value), 2.0));
         }
 
     }
@@ -97,7 +97,7 @@ namespace NeuralNetwork
 
         public double EvaluateDerivative(double value)
         {
-            return value > 0 ? 1 : 0.0;
+            return value > 0 ? 1.0 : 0.0;
         }
 
     }
@@ -116,7 +116,7 @@ namespace NeuralNetwork
 
         public double EvaluateDerivative(double value)
         {
-            return value > 0 ? positiveHalfPlaneSlope : negativeHalfPlaneSlope;
+            return value > 0.0 ? positiveHalfPlaneSlope : negativeHalfPlaneSlope;
         }
 
     }

@@ -43,6 +43,7 @@
     <Compile Include="ActivationFunction.cs" />
     <Compile Include="BackPropagationNetwork.cs" />
     <Compile Include="IdentificationData.cs" />
+    <Compile Include="RandomGenerator.cs" />
     <Compile Include="SimpleNetworkTrainer.cs" />
     <Compile Include="Synapse.cs" />
     <Compile Include="Layer.cs" />
