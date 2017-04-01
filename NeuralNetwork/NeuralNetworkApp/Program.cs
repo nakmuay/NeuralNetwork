@@ -32,11 +32,17 @@ namespace NeuralNetworkApp
             // Create net
             int[] layerSizes = { 1, 10, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
-                                                        new TanhActivationFunction(),
-                                                        new TanhActivationFunction(),
-                                                        new TanhActivationFunction()};
+                                                        new SigmoidActivationFunction(),
+                                                        new SigmoidActivationFunction(),
+                                                        new SigmoidActivationFunction()};
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
+
+            // Write output before net has been trained
+            IdentificationData outputIdData;
+            bpn.Run(data, out outputIdData);
+            string beforeTrainingOutput = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_before_training_output.txt";
+            outputIdData.TrySerialize(beforeTrainingOutput);
 
             // Create network trainer
             SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
@@ -44,15 +50,17 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.LearningRate = 0.02;
-            opt.Momentum = 0.001;
+            opt.Momentum = 0.01;
             opt.MaxError = 1.0E-2;
-
-            bpn.Write();
-
-            IdentificationData outputIdData;
-            bpn.Run(data, out outputIdData);
+            opt.MaxIterations = 30000;
 
             trainer.Train(opt);
+
+            // Write output after net has been trained
+            bpn.Run(data, out outputIdData);
+            string afterTrainingOutput = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_after_training_output.txt";
+            outputIdData.TrySerialize(afterTrainingOutput);
+
 
             Console.WriteLine("Training error: {0}", trainer.ErrorSum);
             Console.WriteLine("Training iterations: {0}", trainer.Iterations);
@@ -60,8 +68,7 @@ namespace NeuralNetworkApp
             Console.WriteLine();
             bpn.Write();
 
-            Console.ReadLine();
-
+            //Console.ReadLine();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,5 +67,41 @@ namespace NeuralNetwork
         }
 
         #endregion properties
+
+        #region public methods
+
+        public bool TrySerialize(string filename)
+        {
+            using (System.IO.StreamWriter file = new FormattingStreamWriter(@filename, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                for (int i = 0; i < NumSamples; i++)
+                {
+                    file.WriteLine("{0}\t{1}", InputData[i][0], OutputData[i][0]);
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
+
+    }
+
+    public class FormattingStreamWriter : StreamWriter
+    {
+        private readonly IFormatProvider formatProvider;
+
+        public FormattingStreamWriter(string path, IFormatProvider formatProvider)
+            : base(path)
+        {
+            this.formatProvider = formatProvider;
+        }
+        public override IFormatProvider FormatProvider
+        {
+            get
+            {
+                return this.formatProvider;
+            }
+        }
     }
 }
