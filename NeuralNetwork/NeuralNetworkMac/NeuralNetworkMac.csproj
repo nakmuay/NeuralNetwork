@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{906CA8AB-7625-41BD-9061-F1DACFFCF0CD}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>NeuralNetworkMac</RootNamespace>
+    <AssemblyName>NeuralNetworkMac</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\NeuralNetwork\ActivationFunction.cs">
+      <Link>ActivationFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\NeuralNetwork\BackPropagationNetwork.cs">
+      <Link>BackPropagationNetwork.cs</Link>
+    </Compile>
+    <Compile Include="..\NeuralNetwork\IdentificationData.cs">
+      <Link>IdentificationData.cs</Link>
+    </Compile>
+    <Compile Include="..\NeuralNetwork\Layer.cs">
+      <Link>Layer.cs</Link>
+    </Compile>
+    <Compile Include="..\NeuralNetwork\SimpleNetworkTrainer.cs">
+      <Link>SimpleNetworkTrainer.cs</Link>
+    </Compile>
+    <Compile Include="..\NeuralNetwork\Synapse.cs">
+      <Link>Synapse.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
