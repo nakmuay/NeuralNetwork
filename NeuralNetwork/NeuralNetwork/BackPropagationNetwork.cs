@@ -161,7 +161,7 @@ namespace NeuralNetwork
             for (int i = 0; i < synapses.Length; i++)
             {
                 double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
-                synapses[i].UpdateWeights(synapseInput, delta[i], learningRate, momentum);
+                synapses[i].Update(synapseInput, delta[i], learningRate, momentum);
             }
 
             return error;

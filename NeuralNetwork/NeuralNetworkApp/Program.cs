@@ -15,7 +15,7 @@ namespace NeuralNetworkApp
         {
             // Create some training data
             double xMin = 0.0;
-            int numSamples = 63;
+            int numSamples = 10;
             double[][] input = new double[numSamples][];
             double[][] output = new double[numSamples][];
             for (int i = 0; i < numSamples; i++)
@@ -24,10 +24,12 @@ namespace NeuralNetworkApp
                 input[i][0] = xMin + i/10.0;
 
                 output[i] = new double[1];
-                output[i][0] = Math.Sin(input[i][0]);
+                output[i][0] = Math.Pow(input[i][0], 2);
             }
 
             IdentificationData data = new IdentificationData(input, output);
+            string refFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_reference.txt";
+            data.TrySerialize(refFile);
 
             // Create net
             int[] layerSizes = { 1, 10, 10, 1 };
@@ -39,36 +41,30 @@ namespace NeuralNetworkApp
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
 
             // Write output before net has been trained
-            IdentificationData outputIdData;
-            bpn.Run(data, out outputIdData);
-            string beforeTrainingOutput = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_before_training_output.txt";
-            outputIdData.TrySerialize(beforeTrainingOutput);
+            IdentificationData beforeTrainData;
+            bpn.Run(data, out beforeTrainData);
+            string beforeTrainFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_before_training.txt";
+            beforeTrainData.TrySerialize(beforeTrainFile);
 
             // Create network trainer
             SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
-            opt.LearningRate = 0.02;
-            opt.Momentum = 0.01;
-            opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 30000;
-
+            opt.LearningRate = 0.01;
+            opt.Momentum = 0.0001;
+            opt.MaxError = 1.0E-3;
             trainer.Train(opt);
 
             // Write output after net has been trained
-            bpn.Run(data, out outputIdData);
-            string afterTrainingOutput = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_after_training_output.txt";
-            outputIdData.TrySerialize(afterTrainingOutput);
+            IdentificationData afterTrainData;
+            bpn.Run(data, out afterTrainData);
+            string afterTrainFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_after_training.txt";
+            afterTrainData.TrySerialize(afterTrainFile);
 
 
             Console.WriteLine("Training error: {0}", trainer.ErrorSum);
             Console.WriteLine("Training iterations: {0}", trainer.Iterations);
-
-            Console.WriteLine();
-            bpn.Write();
-
-            //Console.ReadLine();
         }
     }
 }

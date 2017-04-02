@@ -85,7 +85,7 @@ namespace NeuralNetwork
             }
         }
 
-        public void UpdateWeights(double[] prevLayerOutput, double[] deltas, double learningRate, double momentum)
+        public void Update(double[] prevLayerOutput, double[] deltas, double learningRate, double momentum)
         {
             // Declare local variables
             double weightDelta = 0.0;
@@ -96,13 +96,13 @@ namespace NeuralNetwork
             {
                 for (int j = 0; j < firstLayer.Size; j++)
                 {
-                    weightDelta = learningRate * deltas[i] * prevLayerOutput[j] + momentum * previousWeightDelta[i, j];
+                    weightDelta = learningRate * deltas[i] * prevLayerOutput[j]; // + momentum * previousWeightDelta[i, j];
                     weightMatrix[i, j] -= weightDelta;
                     previousWeightDelta[i, j] = weightDelta;
                 }
 
                 // Update deltas
-                biasDelta = learningRate * deltas[i] + momentum * previousBiasDelta[i];
+                biasDelta = learningRate * deltas[i]; // + momentum * previousBiasDelta[i];
                 previousBiasDelta[i] = biasDelta;
                 bias[i] -= biasDelta;
             }
@@ -166,16 +166,30 @@ namespace NeuralNetwork
 
         private double initializeWeight(int numberOfInputs)
         {
+            /*
             // TODO [martin, 2017-04-01]:   This initialization assumes a symmteric activation function, e.g. tanh, see: http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf.
             //                              More ellaborate methods can be used depending on which type of activation function is used.
+            
+            // In case of tanh activation function
             double std = Math.Sqrt(1.0 / numberOfInputs);
             GaussianGenerator gaussianRand = new GaussianGenerator(0.0, std, rng);
+            return gaussianRand.NextDouble();
+            */
+
+            // In case of sigmoid activation function
+            double std = Math.Sqrt(1.0 / numberOfInputs);
+            GaussianGenerator gaussianRand = new GaussianGenerator(0.5, std, rng);
             return gaussianRand.NextDouble();
         }
 
         private double initializeBias(int numberOfInputs)
         {
-            GaussianGenerator gaussianRand = new GaussianGenerator(0.0, 1.0, rng);
+            // In case of tanh activation function
+            //GaussianGenerator gaussianRand = new GaussianGenerator(0.0, 1.0, rng);
+            //return gaussianRand.NextDouble();
+
+            // In case of sigmoid activation function
+            GaussianGenerator gaussianRand = new GaussianGenerator(0.5, 1.0, rng);
             return gaussianRand.NextDouble();
         }
 
