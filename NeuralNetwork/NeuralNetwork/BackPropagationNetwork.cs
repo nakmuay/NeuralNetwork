@@ -56,8 +56,6 @@ namespace NeuralNetwork
 
             Console.WriteLine("Creating synapses ...");
 
-            // Create synapses (connections) between layers
-            synapses = new Synapse[layerCount];
             InitializeSynapses();
         }
 

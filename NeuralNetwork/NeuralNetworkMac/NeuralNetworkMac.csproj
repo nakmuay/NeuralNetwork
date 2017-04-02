@@ -53,6 +53,9 @@
     <Compile Include="..\NeuralNetwork\Synapse.cs">
       <Link>Synapse.cs</Link>
     </Compile>
+    <Compile Include="..\NeuralNetwork\RandomGenerator.cs">
+      <Link>RandomGenerator.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
