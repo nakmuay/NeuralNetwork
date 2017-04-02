@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using NeuralNetwork;
+using System.IO;
 
 namespace NeuralNetworkApp
 {
@@ -28,7 +29,9 @@ namespace NeuralNetworkApp
             }
 
             IdentificationData data = new IdentificationData(input, output);
-            string refFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_reference.txt";
+            string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "NetworkData");
+            Directory.CreateDirectory(outputFolder);
+            string refFile = Path.Combine(outputFolder, "neural_net_reference.txt");
             data.TrySerialize(refFile);
 
             // Create net
@@ -43,7 +46,7 @@ namespace NeuralNetworkApp
             // Write output before net has been trained
             IdentificationData beforeTrainData;
             bpn.Run(data, out beforeTrainData);
-            string beforeTrainFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_before_training.txt";
+            string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
             beforeTrainData.TrySerialize(beforeTrainFile);
 
             // Create network trainer
@@ -59,7 +62,7 @@ namespace NeuralNetworkApp
             // Write output after net has been trained
             IdentificationData afterTrainData;
             bpn.Run(data, out afterTrainData);
-            string afterTrainFile = "C:\\Users\\Martin\\Documents\\Visual Studio 2015\\Projects\\neural_net_after_training.txt";
+            string afterTrainFile = Path.Combine(outputFolder, "neural_net_after_training.txt");
             afterTrainData.TrySerialize(afterTrainFile);
 
 
