@@ -16,16 +16,16 @@ namespace NeuralNetworkApp
         {
             // Create some training data
             double xMin = 0.0;
-            int numSamples = 62;
+            int numSamples = 100;
             double[][] input = new double[numSamples][];
             double[][] output = new double[numSamples][];
             for (int i = 0; i < numSamples; i++)
             {
                 input[i] = new double[1];
-                input[i][0] = xMin + i/10.0;
+                input[i][0] = xMin + i/100.0;
 
                 output[i] = new double[1];
-                output[i][0] = Math.Sin(input[i][0]);
+                output[i][0] = Math.Sin(2 * Math.PI * input[i][0]);
             }
 
             IdentificationData data = new IdentificationData(input, output);
@@ -35,11 +35,11 @@ namespace NeuralNetworkApp
             data.TrySerialize(refFile);
 
             // Create net
-            int[] layerSizes = { 1, 10, 10, 1 };
+            int[] layerSizes = { 1, 5, 10, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
-                                                        new TanhActivationFunction()};
+                                                        new Linear()};
 
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
 
@@ -54,10 +54,12 @@ namespace NeuralNetworkApp
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
-            opt.LearningRate = 0.001;
+            /*
+            opt.LearningRate = 0.01;
             opt.Momentum = 0.001;
-            opt.MaxError = 1.0E-1;
-            opt.MaxIterations = 100000;
+            opt.MaxError = 1.0E-2;
+            opt.MaxIterations = 500000;
+            */
             trainer.Train(opt);
 
             // Write output after net has been trained
