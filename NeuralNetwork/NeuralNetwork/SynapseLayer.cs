@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace NeuralNetwork
 {
 
-    class Synapse
+    class SynapseLayer
     {
-        private Layer firstLayer;
-        private Layer secondLayer;
+        private NeuronLayer firstLayer;
+        private NeuronLayer secondLayer;
 
         private double[,] weightMatrix;
         private double[,] previousWeightDelta;
@@ -20,7 +20,7 @@ namespace NeuralNetwork
 
         private Random rng;
 
-        public Synapse(Layer firstLayer, Layer secondLayer)
+        public SynapseLayer(NeuronLayer firstLayer, NeuronLayer secondLayer)
         {
             this.firstLayer = firstLayer;
             this.secondLayer = secondLayer;
@@ -166,7 +166,6 @@ namespace NeuralNetwork
 
         private double initializeWeight(int numberOfInputs)
         {
-            /*
             // TODO [martin, 2017-04-01]:   This initialization assumes a symmteric activation function, e.g. tanh, see: http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf.
             //                              More ellaborate methods can be used depending on which type of activation function is used.
             
@@ -174,23 +173,27 @@ namespace NeuralNetwork
             double std = Math.Sqrt(1.0 / numberOfInputs);
             GaussianGenerator gaussianRand = new GaussianGenerator(0.0, std, rng);
             return gaussianRand.NextDouble();
-            */
 
+            /*
             // In case of sigmoid activation function
             double std = Math.Sqrt(1.0 / numberOfInputs);
             GaussianGenerator gaussianRand = new GaussianGenerator(0.5, std, rng);
             return gaussianRand.NextDouble();
+            */
         }
 
         private double initializeBias(int numberOfInputs)
         {
             // In case of tanh activation function
-            //GaussianGenerator gaussianRand = new GaussianGenerator(0.0, 1.0, rng);
-            //return gaussianRand.NextDouble();
 
+            GaussianGenerator gaussianRand = new GaussianGenerator(0.0, 1.0, rng);
+            return gaussianRand.NextDouble();
+
+            /*
             // In case of sigmoid activation function
             GaussianGenerator gaussianRand = new GaussianGenerator(0.5, 1.0, rng);
             return gaussianRand.NextDouble();
+            */
         }
 
         private double[,] getTransposedWeightMatrix()

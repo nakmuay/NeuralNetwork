@@ -45,8 +45,8 @@
     <Compile Include="IdentificationData.cs" />
     <Compile Include="RandomGenerator.cs" />
     <Compile Include="SimpleNetworkTrainer.cs" />
-    <Compile Include="Synapse.cs" />
-    <Compile Include="Layer.cs" />
+    <Compile Include="SynapseLayer.cs" />
+    <Compile Include="NeuronLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

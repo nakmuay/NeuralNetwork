@@ -55,8 +55,9 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.LearningRate = 0.001;
-            opt.Momentum = 0.0001;
+            opt.Momentum = 0.001;
             opt.MaxError = 1.0E-1;
+            opt.MaxIterations = 100000;
             trainer.Train(opt);
 
             // Write output after net has been trained

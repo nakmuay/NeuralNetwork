@@ -16,10 +16,10 @@ namespace NeuralNetwork
         private double[][] layerOutput;
         private double[][] delta;
 
-        private Layer inputLayer;
+        private NeuronLayer inputLayer;
         private int layerCount;
-        private Layer[] layers;
-        private Synapse[] synapses;
+        private NeuronLayer[] layers;
+        private SynapseLayer[] synapses;
 
         #endregion
 
@@ -40,10 +40,10 @@ namespace NeuralNetwork
             delta = new double[layerCount][];
 
             // Treat input layer separately
-            inputLayer = new Layer(layerSizes[0], transferFunctions[0]);
+            inputLayer = new NeuronLayer(layerSizes[0], transferFunctions[0]);
 
             // Create hidden layers and output layer
-            layers = new Layer[layerCount];
+            layers = new NeuronLayer[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
                 // Add one element to hold the bias value
@@ -51,7 +51,7 @@ namespace NeuralNetwork
                 layerOutput[i] = new double[layerSizes[i + 1]];
                 delta[i]       = new double[layerSizes[i + 1]];
 
-                layers[i]      = new Layer(layerSizes[i + 1], transferFunctions[i + 1]);
+                layers[i]      = new NeuronLayer(layerSizes[i + 1], transferFunctions[i + 1]);
             }
 
             Console.WriteLine("Creating synapses ...");
@@ -80,10 +80,10 @@ namespace NeuralNetwork
         public void InitializeSynapses()
         {
             // Create synapses (connections) between layers
-            synapses = new Synapse[layerCount];
+            synapses = new SynapseLayer[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
-                synapses[i] = new Synapse(i == 0 ? inputLayer : layers[i - 1], layers[i]);
+                synapses[i] = new SynapseLayer(i == 0 ? inputLayer : layers[i - 1], layers[i]);
             }
         }
 

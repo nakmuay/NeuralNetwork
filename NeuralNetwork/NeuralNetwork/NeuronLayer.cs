@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace NeuralNetwork
 {
 
-    class Layer
+    class NeuronLayer
     {
 
         protected readonly int size;
         private readonly IDoubleEvaluatable activationFunction;
 
-        public Layer(int size, IDoubleEvaluatable activationFunction)
+        public NeuronLayer(int size, IDoubleEvaluatable activationFunction)
         {
             this.size = size;
             this.activationFunction = activationFunction;
