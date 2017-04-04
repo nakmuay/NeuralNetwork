@@ -50,9 +50,6 @@ namespace NeuralNetworkApp
             string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
             beforeTrainData.TrySerialize(beforeTrainFile);
 
-            // Create network trainer
-            SimpleNetworkTrainer trainer = new SimpleNetworkTrainer(bpn, data);
-
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             /*
@@ -61,8 +58,10 @@ namespace NeuralNetworkApp
             opt.MaxError = 1.0E-4;
             */
             opt.MaxIterations = 10000;
-            
-            TrainingInformation trainInfo = trainer.Train(opt);
+
+            // Create network trainer
+            SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
+            TrainingInformation trainInfo = trainer.Train(bpn, data, opt);
 
             // Write output after net has been trained
             IdentificationData afterTrainData;

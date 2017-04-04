@@ -9,17 +9,26 @@ namespace NeuralNetwork
     public class SimpleNetworkTrainer
     {
 
-        private BackPropagationNetwork net;
-        private IdentificationData data;
+        private static SimpleNetworkTrainer instace;
 
-        public SimpleNetworkTrainer(BackPropagationNetwork net, IdentificationData data)
+        private SimpleNetworkTrainer()
         {
-            this.net = net;
-            this.data = data;
         }
 
+        public static SimpleNetworkTrainer Instance
+        {
+            get
+            {
+                if (instace == null)
+                {
+                    instace = new SimpleNetworkTrainer();
+                }
 
-        public TrainingInformation Train(TrainingOptions options)
+                return instace;
+            }
+        }
+
+        public TrainingInformation Train(BackPropagationNetwork net, IdentificationData data, TrainingOptions options)
         {
             TrainingInformation trainingInfo = new TrainingInformation();
             int iterations = 0;
@@ -45,13 +54,6 @@ namespace NeuralNetwork
             } while (errorSum > options.MaxError && iterations < options.MaxIterations);
 
             return trainingInfo;
-        }
-
-        public void Train()
-        {
-            // Pass default training options
-            TrainingOptions options = new TrainingOptions();
-            Train(options);
         }
 
     }
@@ -189,7 +191,7 @@ namespace NeuralNetwork
         public void WriteTrainingSummary()
         {
             Console.WriteLine("*** Training Summary (START) ***");
-            Console.WriteLine("Final training error: {0:E4}", FinalError);
+            Console.WriteLine("Final training error:               {0:E4}", FinalError);
             Console.WriteLine("Final number of traning iterations: {0}", FinalIterationCount);
             Console.WriteLine("*** Training Summary (END) ***");
         }
