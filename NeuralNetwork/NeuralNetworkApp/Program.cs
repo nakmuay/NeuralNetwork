@@ -60,9 +60,9 @@ namespace NeuralNetworkApp
             opt.Momentum = 0.001;
             opt.MaxError = 1.0E-4;
             */
-            opt.MaxIterations = 100000;
+            opt.MaxIterations = 10000;
             
-            trainer.Train(opt);
+            TrainingInformation trainInfo = trainer.Train(opt);
 
             // Write output after net has been trained
             IdentificationData afterTrainData;
@@ -70,9 +70,9 @@ namespace NeuralNetworkApp
             string afterTrainFile = Path.Combine(outputFolder, "neural_net_after_training.txt");
             afterTrainData.TrySerialize(afterTrainFile);
 
+            trainInfo.WriteTrainingSummary();
 
-            Console.WriteLine("Training error: {0}", trainer.ErrorSum);
-            Console.WriteLine("Training iterations: {0}", trainer.Iterations);
+            Console.ReadLine();
         }
     }
 }

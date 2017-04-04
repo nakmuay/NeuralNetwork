@@ -12,22 +12,18 @@ namespace NeuralNetwork
         private BackPropagationNetwork net;
         private IdentificationData data;
 
-        private int iterations;
-        private double errorSum;
-        private List<double> errorSumHistory;
-
         public SimpleNetworkTrainer(BackPropagationNetwork net, IdentificationData data)
         {
             this.net = net;
             this.data = data;
-
-            this.iterations = 0;
-            errorSumHistory = new List<double>();
         }
 
 
-        public void Train(TrainingOptions options)
+        public TrainingInformation Train(TrainingOptions options)
         {
+            TrainingInformation trainingInfo = new TrainingInformation();
+            int iterations = 0;
+            double errorSum = 0.0;
             do
             {
                 // Prepare to train epoch
@@ -43,17 +39,12 @@ namespace NeuralNetwork
                     Console.WriteLine("Training epoch: {0}, error: {1:E2}", iterations, errorSum);
                 }
 
-                /*
-                if (iterations % 10000 == 0 && errorSum > options.MaxError)
-                {
-                    Console.WriteLine("Nudging synapse weights ...");
-                    net.NudgeSynapses();
-                }
-                */
-
-                errorSumHistory.Add(errorSum);
+                trainingInfo.IterationHistory.Add(iterations);
+                trainingInfo.ErrorHistory.Add(errorSum);
 
             } while (errorSum > options.MaxError && iterations < options.MaxIterations);
+
+            return trainingInfo;
         }
 
         public void Train()
@@ -62,27 +53,6 @@ namespace NeuralNetwork
             TrainingOptions options = new TrainingOptions();
             Train(options);
         }
-
-
-        #region properties
-
-        public double ErrorSum
-        {
-            get
-            {
-                return this.errorSum;
-            }
-        }
-
-        public double Iterations
-        {
-            get
-            {
-                return this.iterations;
-            }
-        }
-
-        #endregion
 
     }
 
@@ -152,6 +122,76 @@ namespace NeuralNetwork
             {
                 maxIterations = value;
             }
+        }
+
+        #endregion
+
+    }
+
+    public class TrainingInformation
+    {
+
+        private List<int> iterationHistory;
+        private List<double> errorHistory;
+
+        public TrainingInformation()
+        {
+            iterationHistory = new List<int>();
+            errorHistory = new List<double>();
+        }
+
+        #region properties
+
+        public List<int> IterationHistory
+        {
+            get
+            {
+                return iterationHistory;
+            }
+            set
+            {
+                iterationHistory = value;
+            }
+        }
+
+        public int FinalIterationCount
+        {
+            get
+            {
+                return IterationHistory[IterationHistory.Count - 1];
+            }
+        }
+
+        public List<double> ErrorHistory
+        {
+            get
+            {
+                return errorHistory;
+            }
+            set
+            {
+                errorHistory = value;
+            }
+        }
+
+        public double FinalError
+        {
+            get
+            {
+                return ErrorHistory[ErrorHistory.Count - 1];
+            }
+        }
+
+        #endregion
+
+        #region methods
+
+        public void WriteTrainingSummary()
+        {
+            Console.WriteLine("*** Training Summary (START) ***");
+            Console.WriteLine("Final training error: {0:E4}", FinalError);
+            Console.WriteLine("Final number of traning iterations: {0}", FinalIterationCount);
+            Console.WriteLine("*** Training Summary (END) ***");
         }
 
         #endregion
