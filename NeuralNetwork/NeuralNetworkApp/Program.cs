@@ -25,7 +25,8 @@ namespace NeuralNetworkApp
                 input[i][0] = xMin + i/100.0;
 
                 output[i] = new double[1];
-                output[i][0] = Math.Sin(2 * Math.PI * input[i][0]);
+                output[i][0] = 1 / 2 * Math.Sin(2 * Math.PI * input[i][0]) + Math.Sin(2.5 * Math.PI * input[i][0])
+                                + Math.Sin(3.5 * Math.PI * input[i][0]) + 1/20 * Math.Sin(5 * Math.PI * input[i][0]);
             }
 
             IdentificationData data = new IdentificationData(input, output);
@@ -35,7 +36,7 @@ namespace NeuralNetworkApp
             data.TrySerialize(refFile);
 
             // Create net
-            int[] layerSizes = { 1, 5, 10, 1 };
+            int[] layerSizes = { 1, 8, 8, 1 };
             IDoubleEvaluatable[] activationFunction =  {new None(),
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
@@ -57,9 +58,10 @@ namespace NeuralNetworkApp
             /*
             opt.LearningRate = 0.01;
             opt.Momentum = 0.001;
-            opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 500000;
+            opt.MaxError = 1.0E-4;
             */
+            opt.MaxIterations = 100000;
+            
             trainer.Train(opt);
 
             // Write output after net has been trained
