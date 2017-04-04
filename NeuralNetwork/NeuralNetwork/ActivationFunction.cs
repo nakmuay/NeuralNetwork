@@ -69,6 +69,7 @@ namespace NeuralNetwork
 
     }
 
+
     public class ModifiedTanhActivationFunction : IDoubleEvaluatable
     {
 
@@ -80,6 +81,7 @@ namespace NeuralNetwork
             return scale * Math.Tanh(periodScale * value);
         }
 
+        // TODO [martin, 2017-04-04]: Fix the calcualtion of the derivative. This is currently incorrect!
         public double EvaluateDerivative(double value)
         {
             return scale * periodScale * (1.0 - Math.Pow(Evaluate(value), 2.0));
