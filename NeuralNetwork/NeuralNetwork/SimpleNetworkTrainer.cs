@@ -156,6 +156,14 @@ namespace NeuralNetwork
             }
         }
 
+        public int NumIterations
+        {
+            get
+            {
+                return IterationHistory.Count;
+            }
+        }
+
         public int FinalIterationCount
         {
             get
@@ -194,6 +202,19 @@ namespace NeuralNetwork
             Console.WriteLine("Final training error:               {0:E4}", FinalError);
             Console.WriteLine("Final number of traning iterations: {0}", FinalIterationCount);
             Console.WriteLine("*** Training Summary (END) ***");
+        }
+
+        public bool TrySerialize(string filename)
+        {
+            using (System.IO.StreamWriter file = new FormattingStreamWriter(@filename, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                for (int i = 0; i < NumIterations; i++)
+                {
+                    file.WriteLine("{0}\t{1}", IterationHistory[i], ErrorHistory[i]);
+                }
+            }
+
+            return false;
         }
 
         #endregion

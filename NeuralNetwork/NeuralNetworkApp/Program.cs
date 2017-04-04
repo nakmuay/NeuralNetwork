@@ -56,8 +56,8 @@ namespace NeuralNetworkApp
             opt.LearningRate = 0.01;
             opt.Momentum = 0.001;
             opt.MaxError = 1.0E-4;
-            */
             opt.MaxIterations = 10000;
+            */
 
             // Create network trainer
             SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
@@ -70,6 +70,10 @@ namespace NeuralNetworkApp
             afterTrainData.TrySerialize(afterTrainFile);
 
             trainInfo.WriteTrainingSummary();
+
+            // Write training information to file
+            string trainingInfoFile = Path.Combine(outputFolder, "neural_net_training_info.txt");
+            trainInfo.TrySerialize(trainingInfoFile);
 
             Console.ReadLine();
         }
