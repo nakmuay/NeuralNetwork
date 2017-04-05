@@ -42,7 +42,7 @@ namespace NeuralNetworkApp
                                                         new TanhActivationFunction(),
                                                         new Linear()};
 
-            BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction);
+            BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction, new SquaredErrorFunction());
 
             // Write output before net has been trained
             IdentificationData beforeTrainData;

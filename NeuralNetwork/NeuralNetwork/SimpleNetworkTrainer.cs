@@ -43,7 +43,7 @@ namespace NeuralNetwork
                 }
 
                 // Print some intermediate information
-                if (iterations % 100 == 0)
+                if (iterations % 500 == 0)
                 {
                     Console.WriteLine("Training epoch: {0}, error: {1:E2}", iterations, errorSum);
                 }

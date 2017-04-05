@@ -15,16 +15,20 @@ namespace NeuralNetwork
         private double[][] layerInput;
         private double[][] layerOutput;
         private double[][] delta;
+        private IDoubleCostFunction costFunction;
+
 
         private NeuronLayer inputLayer;
         private int layerCount;
-        private NeuronLayer[] layers;
+        private NeuronLayer[] hiddenLayers;
         private SynapseLayer[] synapses;
 
         #endregion
 
-        public BackPropagationNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions)
+        public BackPropagationNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions, IDoubleCostFunction costFunction)
         {
+            this.costFunction = costFunction;
+
             // Validate input
             if (transferFunctions.Length != layerSizes.Length)
             {
@@ -34,16 +38,16 @@ namespace NeuralNetwork
             Console.WriteLine("Creating layers ...");
 
             // Initialize variables
-            layerCount = layerSizes.Length - 1;
-            layerInput = new double[layerCount][];
+            layerCount  = layerSizes.Length - 1;
+            layerInput  = new double[layerCount][];
             layerOutput = new double[layerCount][];
-            delta = new double[layerCount][];
+            delta       = new double[layerCount][];
 
             // Treat input layer separately
             inputLayer = new NeuronLayer(layerSizes[0], transferFunctions[0]);
 
             // Create hidden layers and output layer
-            layers = new NeuronLayer[layerCount];
+            hiddenLayers = new NeuronLayer[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
                 // Add one element to hold the bias value
@@ -51,7 +55,7 @@ namespace NeuralNetwork
                 layerOutput[i] = new double[layerSizes[i + 1]];
                 delta[i]       = new double[layerSizes[i + 1]];
 
-                layers[i]      = new NeuronLayer(layerSizes[i + 1], transferFunctions[i + 1]);
+                hiddenLayers[i] = new NeuronLayer(layerSizes[i + 1], transferFunctions[i + 1]);
             }
 
             Console.WriteLine("Creating synapses ...");
@@ -83,7 +87,7 @@ namespace NeuralNetwork
             synapses = new SynapseLayer[layerCount];
             for (int i = 0; i < layerCount; i++)
             {
-                synapses[i] = new SynapseLayer(i == 0 ? inputLayer : layers[i - 1], layers[i]);
+                synapses[i] = new SynapseLayer(i == 0 ? inputLayer : hiddenLayers[i - 1], hiddenLayers[i]);
             }
         }
 
@@ -119,13 +123,13 @@ namespace NeuralNetwork
             for (int i = 0; i < layerCount; i++)
             {
                 synapses[i].ForwardPropagate((i == 0 ? input : layerOutput[i - 1]), out layerInput[i]);
-                layers[i].Run(layerInput[i], out layerOutput[i]);
+                hiddenLayers[i].Run(layerInput[i], out layerOutput[i]);
             }
 
             output = layerOutput[lastLayerIndex];
         }
 
-        public double Train(double[] input, double[] wantedOutput, double learningRate, double momentum)
+        public double Train(double[] input, double[] targetOutput, double learningRate, double momentum)
         {
             // Validate input
             if (input.Length != inputLayer.Size)
@@ -133,7 +137,7 @@ namespace NeuralNetwork
                 throw new ArgumentException("The input data must have the same size as the network input layer.");
             }
 
-            if (wantedOutput.Length != layers[lastLayerIndex].Size)
+            if (targetOutput.Length != hiddenLayers[lastLayerIndex].Size)
             {
                 throw new ArgumentException("The training output data must have the same size as the network output layer.");
             }
@@ -142,18 +146,13 @@ namespace NeuralNetwork
             double[] output;
             Run(input, out output);
 
-            // Calculate error for output layer
-            double error = 0.0;
-            for (int i = 0; i < layers[lastLayerIndex].Size; i++)
-            {
-                delta[lastLayerIndex][i] = (output[i] - wantedOutput[i]);
-                error += Math.Pow(delta[lastLayerIndex][i], 2);
-            }
+            // Calculate cost for output layer
+            double cost = costFunction.Evaluate(output, targetOutput, out delta[lastLayerIndex]);
 
             // Backpropagate error through hidden layers
             for (int i = lastLayerIndex; i > 0; i--)
             {
-                layers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
+                hiddenLayers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
                 synapses[i].Backpropagate(delta[i], out delta[i - 1]);
             }
 
@@ -164,7 +163,7 @@ namespace NeuralNetwork
                 synapses[i].Update(synapseInput, delta[i], learningRate, momentum);
             }
 
-            return error;
+            return cost;
         }
     }
 }
