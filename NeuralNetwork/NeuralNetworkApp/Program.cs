@@ -52,12 +52,6 @@ namespace NeuralNetworkApp
 
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
-            /*
-            opt.LearningRate = 0.01;
-            opt.Momentum = 0.001;
-            opt.MaxError = 1.0E-4;
-            opt.MaxIterations = 10000;
-            */
 
             // Create network trainer
             SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
@@ -76,6 +70,7 @@ namespace NeuralNetworkApp
             trainInfo.TrySerialize(trainingInfoFile);
 
             Console.ReadLine();
+
         }
     }
 }
