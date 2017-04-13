@@ -15,25 +15,8 @@ namespace NeuralNetworkApp
         static void Main(string[] args)
         {
             // Create some training data
-            double xMin = 0.0;
-            int numSamples = 100;
-            double[][] input = new double[numSamples][];
-            double[][] output = new double[numSamples][];
-            for (int i = 0; i < numSamples; i++)
-            {
-                input[i] = new double[1];
-                input[i][0] = xMin + i/100.0;
-
-                output[i] = new double[1];
-                output[i][0] = 1 / 2 * Math.Sin(2 * Math.PI * input[i][0]) + Math.Sin(2.5 * Math.PI * input[i][0])
-                                + Math.Sin(3.5 * Math.PI * input[i][0]) + 1/20 * Math.Sin(5 * Math.PI * input[i][0]);
-            }
-
-            IdentificationData data = new IdentificationData(input, output);
-            string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "NetworkData");
-            Directory.CreateDirectory(outputFolder);
-            string refFile = Path.Combine(outputFolder, "neural_net_reference.txt");
-            data.TrySerialize(refFile);
+            IdenfificationDataFactory dataFactory = new TestIdentificationDataFactory(5, 100);
+            IdentificationDataSet dataSet = dataFactory.GetData();
 
             // Create net
             int[] layerSizes = { 1, 8, 8, 1 };
@@ -41,36 +24,66 @@ namespace NeuralNetworkApp
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new Linear()};
-
             BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction, new SquaredErrorFunction());
-
-            // Write output before net has been trained
-            IdentificationData beforeTrainData;
-            bpn.Run(data, out beforeTrainData);
-            string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
-            beforeTrainData.TrySerialize(beforeTrainFile);
-
-            // Create trainging options
-            TrainingOptions opt = new TrainingOptions();
 
             // Create network trainer
             SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
-            TrainingInformation trainInfo = trainer.Train(bpn, data, opt);
+
+            // Create trainging options
+            TrainingOptions opt = new TrainingOptions();
+            opt.MaxError = 1.0E-2;
+            opt.MaxIterations = 20000;
+            
+            // Partition data
+            RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
+            List<CrossValidationPartition> cvPartition = cvFactory.Create();
+
+            TrainingInformation trainInfo;
+            double testError;
+            foreach (var partition in cvPartition)
+            {
+                // Train network
+                foreach (var index in partition.TrainingSet)
+                {
+                    trainInfo = trainer.Train(bpn, dataSet.Data[index], opt);
+                }
+
+                // Test network performance
+                foreach (var index in partition.TestSet)
+                {
+                    testError = bpn.Test(dataSet.Data[index]);
+                }
+            }
+
+
+            IdentificationData testData = dataSet.Data[cvPartition[0].TestSet[0]];
+
+            string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "NetworkData");
+            Directory.CreateDirectory(outputFolder);
+            string refFile = Path.Combine(outputFolder, "neural_net_reference.txt");
+            testData.TrySerialize(refFile);
+
+            // Write output before net has been trained
+            IdentificationData beforeTrainData;
+            bpn.Run(testData, out beforeTrainData);
+            string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
+            beforeTrainData.TrySerialize(beforeTrainFile);
 
             // Write output after net has been trained
             IdentificationData afterTrainData;
-            bpn.Run(data, out afterTrainData);
+            bpn.Run(testData, out afterTrainData);
             string afterTrainFile = Path.Combine(outputFolder, "neural_net_after_training.txt");
             afterTrainData.TrySerialize(afterTrainFile);
 
+            /*
             trainInfo.WriteTrainingSummary();
 
             // Write training information to file
             string trainingInfoFile = Path.Combine(outputFolder, "neural_net_training_info.txt");
             trainInfo.TrySerialize(trainingInfoFile);
+            */
 
             Console.ReadLine();
-
         }
     }
 }

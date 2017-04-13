@@ -30,16 +30,24 @@ namespace NeuralNetwork
 
         public TrainingInformation Train(BackPropagationNetwork net, IdentificationData data, TrainingOptions options)
         {
+            // Prepare to train epoch
             TrainingInformation trainingInfo = new TrainingInformation();
             int iterations = 0;
             double errorSum = 0.0;
             do
             {
-                // Prepare to train epoch
-                iterations++; errorSum = 0;
+                // Train network
+                iterations++;
                 for (int i = 0; i < data.NumSamples; i++)
                 {
-                    errorSum += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
+                    net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
+                }
+
+                // Evaluate network
+                errorSum = 0;
+                for (int i = 0; i < data.NumSamples; i++)
+                {
+                    errorSum += net.Test(data.InputData[i], data.OutputData[i]);
                 }
 
                 // Print some intermediate information

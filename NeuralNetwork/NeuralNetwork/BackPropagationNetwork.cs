@@ -38,10 +38,10 @@ namespace NeuralNetwork
             Console.WriteLine("Creating layers ...");
 
             // Initialize variables
-            layerCount  = layerSizes.Length - 1;
-            layerInput  = new double[layerCount][];
+            layerCount = layerSizes.Length - 1;
+            layerInput = new double[layerCount][];
             layerOutput = new double[layerCount][];
-            delta       = new double[layerCount][];
+            delta = new double[layerCount][];
 
             // Treat input layer separately
             inputLayer = new NeuronLayer(layerSizes[0], transferFunctions[0]);
@@ -51,9 +51,9 @@ namespace NeuralNetwork
             for (int i = 0; i < layerCount; i++)
             {
                 // Add one element to hold the bias value
-                layerInput[i]  = new double[layerSizes[i + 1]];
+                layerInput[i] = new double[layerSizes[i + 1]];
                 layerOutput[i] = new double[layerSizes[i + 1]];
-                delta[i]       = new double[layerSizes[i + 1]];
+                delta[i] = new double[layerSizes[i + 1]];
 
                 hiddenLayers[i] = new NeuronLayer(layerSizes[i + 1], transferFunctions[i + 1]);
             }
@@ -129,7 +129,42 @@ namespace NeuralNetwork
             output = layerOutput[lastLayerIndex];
         }
 
-        public double Train(double[] input, double[] targetOutput, double learningRate, double momentum)
+        public void Train(double[] input, double[] targetOutput, double learningRate, double momentum)
+        {
+            // Validate input
+            if (input.Length != inputLayer.Size)
+            {
+                throw new ArgumentException("The input data must have the same size as the network input layer.");
+            }
+
+            if (targetOutput.Length != hiddenLayers[lastLayerIndex].Size)
+            {
+                throw new ArgumentException("The training output data must have the same size as the network output layer.");
+            }
+
+            // Run the network
+            double[] output;
+            Run(input, out output);
+
+            // Calculate deltas for output layer
+            delta[lastLayerIndex] = costFunction.EvaluatePartialDerivatives(output, targetOutput);
+
+            // Backpropagate error through hidden layers
+            for (int i = lastLayerIndex; i > 0; i--)
+            {
+                hiddenLayers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
+                synapses[i].Backpropagate(delta[i], out delta[i - 1]);
+            }
+
+            // Update weights
+            for (int i = 0; i < synapses.Length; i++)
+            {
+                double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
+                synapses[i].Update(synapseInput, delta[i], learningRate, momentum);
+            }
+        }
+
+        public double Test(double[] input, double[] targetOutput)
         {
             // Validate input
             if (input.Length != inputLayer.Size)
@@ -147,23 +182,20 @@ namespace NeuralNetwork
             Run(input, out output);
 
             // Calculate cost for output layer
-            double cost = costFunction.Evaluate(output, targetOutput, out delta[lastLayerIndex]);
-
-            // Backpropagate error through hidden layers
-            for (int i = lastLayerIndex; i > 0; i--)
-            {
-                hiddenLayers[i].CalculateDeltas(layerInput[i], delta[i], out delta[i]);
-                synapses[i].Backpropagate(delta[i], out delta[i - 1]);
-            }
-
-            // Update weights
-            for (int i = 0; i < synapses.Length; i++)
-            {
-                double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
-                synapses[i].Update(synapseInput, delta[i], learningRate, momentum);
-            }
-
-            return cost;
+            return costFunction.Evaluate(output, targetOutput);
         }
+
+        public double Test(IdentificationData data)
+        {
+            double error = 0.0;
+            for (int i = 0; i < data.NumSamples; i++)
+            {
+                error += this.Test(data.InputData[i], data.OutputData[i]);
+            }
+
+            return error;
+        }
+
     }
+
 }

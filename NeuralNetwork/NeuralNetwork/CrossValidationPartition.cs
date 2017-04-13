@@ -6,30 +6,33 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
-    public class CrossValidationPartition
+
+    public class RandomCrossValidationFactory
     {
+
         private int[] indeces;
         private int[] permutedInces;
         private Random rand;
 
-        private readonly int numberOfItems;
+        private readonly int numberOfPartitions;
+        private readonly int totalNumberOfItems;
         private readonly int trainingSetSize;
         private readonly int testSetSize;
-        private readonly int validationSetSize;
 
-        private int[] trainingSet;
-        private int[] testSet;
-        private int[] validationSet;
-
-        public CrossValidationPartition(int numberOfItems, double trainingSetProportion, double testSetProportion)
+        public RandomCrossValidationFactory(int totalNumberOfItems, double trainingSetProportion, int numberOfPartitions)
         {
             // Initialize random number generator
-            rand = new Random();
+            this.rand = new Random();
+
+            // Initialize partition sizes
+            this.numberOfPartitions = numberOfPartitions;
+            this.totalNumberOfItems = totalNumberOfItems;
+            initializeSetSizes(this.totalNumberOfItems, trainingSetProportion, 1.0 - trainingSetProportion, out this.trainingSetSize, out this.testSetSize);
 
             // Allocate indeces array
-            this.indeces = new int[numberOfItems];
-            this.permutedInces = new int[numberOfItems];
-            for (int i = 0; i < numberOfItems; i++)
+            this.indeces = new int[totalNumberOfItems];
+            this.permutedInces = new int[totalNumberOfItems];
+            for (int i = 0; i < totalNumberOfItems; i++)
             {
                 this.indeces[i] = i;
                 this.permutedInces[i] = i;
@@ -37,14 +40,84 @@ namespace NeuralNetwork
 
             // Randomize indeces
             Permute();
-
-            this.numberOfItems = numberOfItems;
-            initializeSetSizes(this.numberOfItems, trainingSetProportion, testSetProportion, out this.trainingSetSize, out this.testSetSize, out this.validationSetSize);
-            intializeSetIndeces(out this.trainingSet, out this.testSet, out this.validationSet);
         }
 
-        public CrossValidationPartition(int numberOfItems) : this(numberOfItems, 0.6, 0.3)
+        public List<CrossValidationPartition> Create()
         {
+            // Declare local variables
+            int[] trainingSet;
+            int[] testSet;
+
+            List<CrossValidationPartition> partitions = new List<CrossValidationPartition>();
+            for (int i = 0; i < numberOfPartitions; i++)
+            {
+                getSetIndeces(out trainingSet, out testSet);
+                partitions.Add(new CrossValidationPartition(trainingSet, testSet));
+
+                Permute();
+            }
+
+            return partitions;
+        }
+
+        public void Permute()
+        {
+            // Declare temporary variables
+            int firstRandomIndex;
+            int secondRandomIndex;
+            int tempIndex;
+
+            // Permute indeces
+            for (int i = 0; i < indeces.Length; i++)
+            {
+                firstRandomIndex = rand.Next(0, permutedInces.Length);
+                tempIndex = permutedInces[firstRandomIndex];
+                secondRandomIndex = rand.Next(0, permutedInces.Length);
+
+                // Swap indeces
+                permutedInces[firstRandomIndex] = permutedInces[secondRandomIndex];
+                permutedInces[secondRandomIndex] = tempIndex;
+            }
+        }
+
+        private void initializeSetSizes(int numberOfItems, double trainingSetProportion, double testSetProportion,
+                                        out int trainingSetSize, out int testSetSize)
+        {
+            // Round training and test sets
+            trainingSetSize = (int)Math.Ceiling((double)numberOfItems * trainingSetProportion);
+            testSetSize = numberOfItems - trainingSetSize;
+        }
+
+        private void getSetIndeces(out int[] trainingSet, out int[] testSet)
+        {
+            // Get set indeces
+            trainingSet = getSubArray(permutedInces, 0, trainingSetSize);
+            testSet = getSubArray(permutedInces, trainingSetSize, testSetSize);
+        }
+
+        // TODO [martin, 2017-04-06]: Refactor this using extension method and LINQ expression, e.g.: http://stackoverflow.com/questions/943635/getting-a-sub-array-from-an-existing-array
+        private int[] getSubArray(int[] arr, int offset, int itemCount)
+        {
+            int[] subArray = new int[itemCount];
+            for (int i = 0; i < itemCount; i++)
+            {
+                subArray[i] = arr[offset + i];
+            }
+
+            return subArray;
+        }
+
+    }
+
+    public class CrossValidationPartition
+    {
+        private int[] trainingSet;
+        private int[] testSet;
+
+        public CrossValidationPartition(int[] trainingSet, int[] testSet)
+        {
+            this.trainingSet = trainingSet;
+            this.testSet = testSet;
         }
 
         #region properties
@@ -65,19 +138,11 @@ namespace NeuralNetwork
             }
         }
 
-        public int[] ValidationSet
-        {
-            get
-            {
-                return validationSet;
-            }
-        }
-
         public int TrainingSetSize
         {
             get
             {
-                return trainingSetSize;
+                return trainingSet.Length;
             }
         }
 
@@ -85,15 +150,15 @@ namespace NeuralNetwork
         {
             get
             {
-                return testSetSize;
+                return testSet.Length;
             }
         }
 
-        public int ValidationSetSize
+        public int TotalNumberOfItems
         {
             get
             {
-                return validationSetSize;
+                return TrainingSetSize + TestSetSize;
             }
         }
 
@@ -101,7 +166,7 @@ namespace NeuralNetwork
         {
             get
             {
-                return (double)trainingSetSize / (double)numberOfItems;
+                return (double)TrainingSetSize / (double)TotalNumberOfItems;
             }
         }
 
@@ -109,43 +174,13 @@ namespace NeuralNetwork
         {
             get
             {
-                return (double)testSetSize / (double)numberOfItems;
-            }
-        }
-
-        public double ValidationSetProportion
-        {
-            get
-            {
-                return (double)validationSetSize / (double)numberOfItems;
+                return (double)TestSetSize / (double)TotalNumberOfItems;
             }
         }
 
         #endregion
 
         #region methods
-
-        public void Permute()
-        {
-            // Declare temporary variables
-            int firstRandomIndex;
-            int secondRandomIndex;
-            int tempIndex;
-
-            // Permute indeces
-            for (int i = 0; i < indeces.Length; i++)
-            {
-                firstRandomIndex = rand.Next(0, permutedInces.Length);
-                tempIndex = permutedInces[firstRandomIndex];
-                secondRandomIndex = rand.Next(0, permutedInces.Length);
-
-                // Swap indeces
-                permutedInces[firstRandomIndex] = permutedInces[secondRandomIndex];
-                permutedInces[secondRandomIndex] = tempIndex;
-            }
-
-            intializeSetIndeces(out this.trainingSet, out this.testSet, out this.validationSet);
-        }
 
         public void Write()
         {
@@ -162,42 +197,6 @@ namespace NeuralNetwork
                 Console.Write("{0}, ", TestSet[i]);
             }
             Console.WriteLine();
-
-            Console.Write("Validation Set: ");
-            for (int i = 0; i < ValidationSetSize; i++)
-            {
-                Console.Write("{0}, ", ValidationSet[i]);
-            }
-            Console.WriteLine();
-        }
-
-        private void initializeSetSizes(int numberOfItems, double trainingSetProportion, double testSetProportion, 
-                                        out int trainingSetSize, out int testSetSize, out int validationSetSize)
-        {
-            // Round training and test sets
-            trainingSetSize     = (int)Math.Ceiling((double)numberOfItems * trainingSetProportion);
-            testSetSize         = (int)Math.Floor((double)numberOfItems * testSetProportion);
-            validationSetSize   = numberOfItems - (trainingSetSize + testSetSize);
-        }
-
-        private void intializeSetIndeces(out int[] trainingSet, out int[] testSet, out int[] validationSet)
-        {
-            // Get set indeces
-            trainingSet     = getSubArray(permutedInces, 0, trainingSetSize);
-            testSet         = getSubArray(permutedInces, trainingSetSize, testSetSize);
-            validationSet   = getSubArray(permutedInces, testSetSize + trainingSetSize, validationSetSize);
-        }
-
-        // TODO [martin, 2017-04-06]: Refactor this using extension method and LINQ expression, e.g.: http://stackoverflow.com/questions/943635/getting-a-sub-array-from-an-existing-array
-        private int[] getSubArray(int[] arr, int offset, int itemCount)
-        {
-            int[] subArray = new int[itemCount];
-            for (int i = 0; i < itemCount; i++)
-            {
-                subArray[i] = arr[offset + i];
-            }
-
-            return subArray;
         }
 
         #endregion
