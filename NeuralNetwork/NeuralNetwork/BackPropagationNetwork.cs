@@ -129,7 +129,7 @@ namespace NeuralNetwork
             output = layerOutput[lastLayerIndex];
         }
 
-        public void Train(double[] input, double[] targetOutput, double learningRate, double momentum)
+        public double Train(double[] input, double[] targetOutput, double learningRate, double momentum)
         {
             // Validate input
             if (input.Length != inputLayer.Size)
@@ -145,6 +145,9 @@ namespace NeuralNetwork
             // Run the network
             double[] output;
             Run(input, out output);
+
+            // Calculate cost for current state of the network
+            double cost = costFunction.Evaluate(output, targetOutput);
 
             // Calculate deltas for output layer
             delta[lastLayerIndex] = costFunction.EvaluatePartialDerivatives(output, targetOutput);
@@ -162,7 +165,10 @@ namespace NeuralNetwork
                 double[] synapseInput = (i == 0 ? input : layerOutput[i - 1]);
                 synapses[i].Update(synapseInput, delta[i], learningRate, momentum);
             }
+
+            return cost;
         }
+
 
         public double Test(double[] input, double[] targetOutput)
         {
@@ -194,6 +200,18 @@ namespace NeuralNetwork
             }
 
             return error;
+        }
+
+        public double Test(IdentificationDataSet dataSet)
+        {
+            double cost = 0.0;
+            for (int i = 0; i < dataSet.Size; i++)
+            {
+                var data = dataSet.Data[i];
+                cost += this.Test(data);
+            }
+
+            return cost;
         }
 
     }

@@ -43,14 +43,14 @@ namespace NeuralNetwork
                 double[][] output = new double[numberOfSamples][];
                 for (int j = 0; j < numberOfSamples; j++)
                 {
-                    input[j]    = new double[1];
+                    input[j] = new double[1];
                     input[j][0] = xMin + j / 100.0;
 
-                    output[j]       = new double[1];
-                    output[j][0]    = 1 / 2 * Math.Sin(2 * Math.PI * input[j][0]) + Math.Sin(2.5 * Math.PI * input[j][0])
+                    output[j] = new double[1];
+                    output[j][0] = 1 / 2 * Math.Sin(2 * Math.PI * input[j][0]) + Math.Sin(2.5 * Math.PI * input[j][0])
                                       + Math.Sin(3.5 * Math.PI * input[j][0]) + 1 / 20 * Math.Sin(5 * Math.PI * input[j][0]);
 
-                    output[j][0] *= 1.0 + (0.5 - rand.NextDouble()) / 3.0;
+                    output[j][0] *= 1 + (0.5 - rand.NextDouble()) / 2.0;
                 }
 
                 data.AddData(new IdentificationData(input, output));
@@ -58,8 +58,8 @@ namespace NeuralNetwork
 
             return data;
         }
-
     }
+
 
     public class IdentificationDataSet
     {
@@ -104,6 +104,19 @@ namespace NeuralNetwork
         public void AddData(IdentificationData data)
         {
             AddData(data, String.Format("experiment_{0}", Size.ToString()));
+        }
+
+        public IdentificationDataSet GetSubset(int[] index)
+        {
+            int numItems = index.Length;
+            IdentificationDataSet subset = new IdentificationDataSet();
+
+            for (int i = 0; i < numItems; i++)
+            {
+                subset.AddData(this.dataSet[index[i]]);
+            }
+
+            return subset;
         }
 
         public bool TrySerialize(string pathname)

@@ -28,6 +28,40 @@ namespace NeuralNetwork
             }
         }
 
+        // TODO [martin, 2017-04-18]: Refactor training methods to share common code
+        public TrainingInformation Train(BackPropagationNetwork net, IdentificationDataSet dataSet, TrainingOptions options)
+        {
+            // Prepare to train epoch
+            TrainingInformation trainingInfo = new TrainingInformation();
+            int iterations = 0;
+            double errorSum = 0.0;
+            do
+            {
+                // Train network
+                iterations++;
+                for (int i = 0; i < dataSet.Size; i++)
+                {
+                    var data = dataSet.Data[i];
+                    for (int j = 0; j < data.NumSamples; j++)
+                    {
+                        errorSum += net.Train(data.InputData[j], data.OutputData[j], options.LearningRate, options.Momentum);
+                    }
+                }
+
+                // Print some intermediate information
+                if (iterations % 500 == 0)
+                {
+                    Console.WriteLine("Training epoch: {0}, error: {1:E2}", iterations, errorSum);
+                }
+
+                trainingInfo.IterationHistory.Add(iterations);
+                trainingInfo.ErrorHistory.Add(errorSum);
+
+            } while (errorSum > options.MaxError && iterations < options.MaxIterations);
+
+            return trainingInfo;
+        }
+
         public TrainingInformation Train(BackPropagationNetwork net, IdentificationData data, TrainingOptions options)
         {
             // Prepare to train epoch
@@ -40,14 +74,7 @@ namespace NeuralNetwork
                 iterations++;
                 for (int i = 0; i < data.NumSamples; i++)
                 {
-                    net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
-                }
-
-                // Evaluate network
-                errorSum = 0;
-                for (int i = 0; i < data.NumSamples; i++)
-                {
-                    errorSum += net.Test(data.InputData[i], data.OutputData[i]);
+                    errorSum += net.Train(data.InputData[i], data.OutputData[i], options.LearningRate, options.Momentum);
                 }
 
                 // Print some intermediate information

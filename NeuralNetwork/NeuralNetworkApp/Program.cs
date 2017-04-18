@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 20000;
+            opt.MaxIterations = 10000;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
@@ -43,16 +43,12 @@ namespace NeuralNetworkApp
             foreach (var partition in cvPartition)
             {
                 // Train network
-                foreach (var index in partition.TrainingSet)
-                {
-                    trainInfo = trainer.Train(bpn, dataSet.Data[index], opt);
-                }
+                var trainingSet = dataSet.GetSubset(partition.TrainingSet);
+                trainInfo = trainer.Train(bpn, trainingSet, opt);
 
                 // Test network performance
-                foreach (var index in partition.TestSet)
-                {
-                    testError = bpn.Test(dataSet.Data[index]);
-                }
+                var testSet = dataSet.GetSubset(partition.TestSet);
+                testError = bpn.Test(testSet);
             }
 
 
