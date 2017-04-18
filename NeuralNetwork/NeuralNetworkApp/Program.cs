@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 10000;
+            opt.MaxIterations = 20000;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
