@@ -88,6 +88,11 @@ namespace NeuralNetworkApp
                 afterTrainData.TrySerialize(writer);
             }
 
+            string setFile = Path.Combine(outputFolder, "neural_net_reference_set.txt");
+            writer = new FormattingStreamWriter(setFile, System.Globalization.CultureInfo.InvariantCulture);
+            dataSet.TrySerialize(writer);
+
+
             /*
             trainInfo.WriteTrainingSummary();
 

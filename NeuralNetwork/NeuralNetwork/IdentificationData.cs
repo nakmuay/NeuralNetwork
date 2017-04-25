@@ -113,9 +113,14 @@ namespace NeuralNetwork
 
         public bool TrySerialize(System.IO.StreamWriter writer, string delimiter=",")
         {
+            // Write header
+            writer.WriteLine(String.Format("Set_size:{0}", this.Size));
+            writer.WriteLine();
+
             for (int i = 0; i < this.Size; i++)
             {
                 dataSet[i].TrySerialize(writer, delimiter);
+                writer.WriteLine();
             }
 
             return true;
