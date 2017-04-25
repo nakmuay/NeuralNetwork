@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 1000;
+            opt.MaxIterations = 100;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
@@ -56,20 +56,37 @@ namespace NeuralNetworkApp
 
             string outputFolder = Path.Combine(Directory.GetCurrentDirectory(), "NetworkData");
             Directory.CreateDirectory(outputFolder);
+
             string refFile = Path.Combine(outputFolder, "neural_net_reference.txt");
-            testData.TrySerialize(refFile);
+            System.IO.StreamWriter writer = new FormattingStreamWriter(refFile, System.Globalization.CultureInfo.InvariantCulture);
+            using (writer)
+            {
+                testData.TrySerialize(writer);
+            }
 
             // Write output before net has been trained
             IdentificationData beforeTrainData;
             net.Run(testData, out beforeTrainData);
+            beforeTrainData.Name = "Before_training";
+
             string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
-            beforeTrainData.TrySerialize(beforeTrainFile);
+            writer = new FormattingStreamWriter(beforeTrainFile, System.Globalization.CultureInfo.InvariantCulture);
+            using (writer)
+            {
+                beforeTrainData.TrySerialize(writer);
+            }
 
             // Write output after net has been trained
             IdentificationData afterTrainData;
             net.Run(testData, out afterTrainData);
+            afterTrainData.Name = "After_training";
+
             string afterTrainFile = Path.Combine(outputFolder, "neural_net_after_training.txt");
-            afterTrainData.TrySerialize(afterTrainFile);
+            writer = new FormattingStreamWriter(afterTrainFile, System.Globalization.CultureInfo.InvariantCulture);
+            using (writer)
+            {
+                afterTrainData.TrySerialize(writer);
+            }
 
             /*
             trainInfo.WriteTrainingSummary();
@@ -79,6 +96,7 @@ namespace NeuralNetworkApp
             trainInfo.TrySerialize(trainingInfoFile);
             */
 
+            Console.WriteLine("Done!");
             Console.ReadLine();
         }
     }

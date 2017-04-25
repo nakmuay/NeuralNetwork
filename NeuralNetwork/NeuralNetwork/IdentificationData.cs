@@ -53,7 +53,7 @@ namespace NeuralNetwork
                     output[j][0] *= 1 + (0.5 - rand.NextDouble()) / 2.0;
                 }
 
-                data.AddData(new IdentificationData(input, output));
+                data.AddData(new IdentificationData(input, output, String.Format("experiment_{0}", i)));
             }
 
             return data;
@@ -65,12 +65,10 @@ namespace NeuralNetwork
     {
 
         private List<IdentificationData> dataSet;
-        private List<string> dataName;
 
         public IdentificationDataSet()
         {
             this.dataSet = new List<IdentificationData>();
-            this.dataName = new List<string>();
         }
 
         #region properties
@@ -95,15 +93,9 @@ namespace NeuralNetwork
 
         #region methods
 
-        public void AddData(IdentificationData data, string name)
-        {
-            this.dataSet.Add(data);
-            this.dataName.Add(name);
-        }
-
         public void AddData(IdentificationData data)
         {
-            AddData(data, String.Format("experiment_{0}", Size.ToString()));
+            this.dataSet.Add(data);
         }
 
         public IdentificationDataSet GetSubset(int[] index)
@@ -119,13 +111,11 @@ namespace NeuralNetwork
             return subset;
         }
 
-        public bool TrySerialize(string pathname)
+        public bool TrySerialize(System.IO.StreamWriter writer, string delimiter=",")
         {
-            string fileEnding = ".csv";
             for (int i = 0; i < this.Size; i++)
             {
-                string filename = Path.Combine(pathname, dataName[i] + fileEnding);
-                dataSet[i].TrySerialize(filename);
+                dataSet[i].TrySerialize(writer, delimiter);
             }
 
             return true;
@@ -137,19 +127,39 @@ namespace NeuralNetwork
 
     public class IdentificationData
     {
+        // Declare internal fields
+        private readonly double[][] inputData;
+        private readonly double[][] outputData;
 
-        public double[][] inputData;
-        public double[][] outputData;
+        private string[] inputName;
+        private string[] outputName;
 
-        public IdentificationData(double[][] inputData)
+        private string name;
+
+        public IdentificationData(double[][] inputData, string name= "")
         {
             this.inputData = inputData;
             this.outputData = new double[inputData.Length][];
+            this.name = name;
+
+            // Initialize input variable names
+            inputName = new string[NumInputVariables];
+            for (int i = 0; i < NumInputVariables; i++)
+            {
+                inputName[i] = String.Format("input_var_{0}", i);
+            }
         }
 
-        public IdentificationData(double[][] inputData, double[][] outputData) : this(inputData)
+        public IdentificationData(double[][] inputData, double[][] outputData, string name="") : this(inputData, name)
         {
             this.outputData = outputData;
+
+            // Initialize output variable names
+            outputName = new string[NumOutputVariables];
+            for (int i = 0; i < NumOutputVariables; i++)
+            {
+                outputName[i] = String.Format("output_var_{0}", i);
+            }
         }
 
         #region properties
@@ -159,6 +169,14 @@ namespace NeuralNetwork
             get
             {
                 return inputData;
+            }
+        }
+
+        public string[] InputName
+        {
+            get
+            {
+                return inputName;
             }
         }
 
@@ -178,6 +196,14 @@ namespace NeuralNetwork
             }
         }
 
+        public string[] OutputName
+        {
+            get
+            {
+                return outputName;
+            }
+        }
+
         public int NumOutputVariables
         {
             get
@@ -194,18 +220,54 @@ namespace NeuralNetwork
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+            set
+            {
+                this.name = value;
+            }
+        }
+
         #endregion properties
 
         #region public methods
 
-        public bool TrySerialize(string filename)
+        public bool TrySerialize(System.IO.StreamWriter writer, string delimiter=",")
         {
-            using (System.IO.StreamWriter file = new FormattingStreamWriter(@filename, System.Globalization.CultureInfo.InvariantCulture))
+            writer.WriteLine(String.Format("Name:{0}", this.Name));
+            writer.WriteLine(String.Format("Number_of_samples:{0}", this.NumSamples));
+
+            // Write header
+            for (int i = 0; i < NumInputVariables; i++)
             {
-                for (int i = 0; i < NumSamples; i++)
+                writer.Write(String.Format("input_{0}:{1}{2}", i, InputName[i], delimiter));
+            }
+
+            for (int i = 0; i < NumOutputVariables; i++)
+            {
+                writer.Write(String.Format("output_{0}:{1}{2}", i, OutputName[i], delimiter));
+            }
+            writer.WriteLine();
+
+            // Write data
+            for (int i = 0; i < NumSamples; i++)
+            {
+                // Write input data
+                for (int j = 0; j < NumInputVariables; j++)
                 {
-                    file.WriteLine("{0}\t{1}", InputData[i][0], OutputData[i][0]);
+                    writer.Write("{0}{1}", InputData[i][0], delimiter);
                 }
+
+                // Write output data
+                for (int j = 0; j < NumOutputVariables; j++)
+                {
+                    writer.Write("{0}{1}", OutputData[i][0], delimiter);
+                }
+                writer.WriteLine();
             }
 
             return true;
