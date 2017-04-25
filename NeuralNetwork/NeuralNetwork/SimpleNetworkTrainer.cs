@@ -29,7 +29,7 @@ namespace NeuralNetwork
         }
 
         // TODO [martin, 2017-04-18]: Refactor training methods to share common code
-        public TrainingInformation Train(BackPropagationNetwork net, IdentificationDataSet dataSet, TrainingOptions options)
+        public TrainingInformation Train(FeedForwardNetwork net, IdentificationDataSet dataSet, TrainingOptions options)
         {
             // Prepare to train epoch
             TrainingInformation trainingInfo = new TrainingInformation();
@@ -62,7 +62,7 @@ namespace NeuralNetwork
             return trainingInfo;
         }
 
-        public TrainingInformation Train(BackPropagationNetwork net, IdentificationData data, TrainingOptions options)
+        public TrainingInformation Train(FeedForwardNetwork net, IdentificationData data, TrainingOptions options)
         {
             // Prepare to train epoch
             TrainingInformation trainingInfo = new TrainingInformation();

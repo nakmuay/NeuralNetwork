@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace NeuralNetwork
 {
 
-    public class BackPropagationNetwork
+    public class FeedForwardNetwork
     {
 
         #region Private data
@@ -25,7 +25,7 @@ namespace NeuralNetwork
 
         #endregion
 
-        public BackPropagationNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions, IDoubleCostFunction costFunction)
+        public FeedForwardNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions, IDoubleCostFunction costFunction)
         {
             this.costFunction = costFunction;
 

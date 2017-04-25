@@ -24,7 +24,7 @@ namespace NeuralNetworkApp
                                                         new TanhActivationFunction(),
                                                         new TanhActivationFunction(),
                                                         new Linear()};
-            BackPropagationNetwork bpn = new BackPropagationNetwork(layerSizes, activationFunction, new SquaredErrorFunction());
+            FeedForwardNetwork net = new FeedForwardNetwork(layerSizes, activationFunction, new SquaredErrorFunction());
 
             // Create network trainer
             SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
@@ -44,11 +44,11 @@ namespace NeuralNetworkApp
             {
                 // Train network
                 var trainingSet = dataSet.GetSubset(partition.TrainingSet);
-                trainInfo = trainer.Train(bpn, trainingSet, opt);
+                trainInfo = trainer.Train(net, trainingSet, opt);
 
                 // Test network performance
                 var testSet = dataSet.GetSubset(partition.TestSet);
-                testError = bpn.Test(testSet);
+                testError = net.Test(testSet);
             }
 
 
@@ -61,13 +61,13 @@ namespace NeuralNetworkApp
 
             // Write output before net has been trained
             IdentificationData beforeTrainData;
-            bpn.Run(testData, out beforeTrainData);
+            net.Run(testData, out beforeTrainData);
             string beforeTrainFile = Path.Combine(outputFolder, "neural_net_before_training.txt");
             beforeTrainData.TrySerialize(beforeTrainFile);
 
             // Write output after net has been trained
             IdentificationData afterTrainData;
-            bpn.Run(testData, out afterTrainData);
+            net.Run(testData, out afterTrainData);
             string afterTrainFile = Path.Combine(outputFolder, "neural_net_after_training.txt");
             afterTrainData.TrySerialize(afterTrainFile);
 

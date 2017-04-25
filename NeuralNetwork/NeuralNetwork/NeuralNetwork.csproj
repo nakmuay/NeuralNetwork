@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationFunction.cs" />
-    <Compile Include="BackPropagationNetwork.cs" />
+    <Compile Include="FeedForwardNetwork.cs" />
     <Compile Include="CostFunction.cs" />
     <Compile Include="CrossValidationPartition.cs" />
     <Compile Include="IdentificationData.cs" />
