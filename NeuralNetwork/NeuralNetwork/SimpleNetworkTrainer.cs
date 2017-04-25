@@ -9,7 +9,7 @@ namespace NeuralNetwork
     public class SimpleNetworkTrainer
     {
 
-        private static SimpleNetworkTrainer instace;
+        private static SimpleNetworkTrainer instance;
 
         private SimpleNetworkTrainer()
         {
@@ -19,12 +19,12 @@ namespace NeuralNetwork
         {
             get
             {
-                if (instace == null)
+                if (instance == null)
                 {
-                    instace = new SimpleNetworkTrainer();
+                    instance = new SimpleNetworkTrainer();
                 }
 
-                return instace;
+                return instance;
             }
         }
 

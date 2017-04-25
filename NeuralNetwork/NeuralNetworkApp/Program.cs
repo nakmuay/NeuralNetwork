@@ -15,7 +15,7 @@ namespace NeuralNetworkApp
         static void Main(string[] args)
         {
             // Create some training data
-            IdenfificationDataFactory dataFactory = new TestIdentificationDataFactory(5, 100);
+            IdenfificationDataFactory dataFactory = new TestIdentificationDataFactory(10, 100);
             IdentificationDataSet dataSet = dataFactory.GetData();
 
             // Create net
@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 20000;
+            opt.MaxIterations = 1000;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
