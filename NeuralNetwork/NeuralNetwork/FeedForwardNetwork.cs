@@ -25,12 +25,12 @@ namespace NeuralNetwork
 
         #endregion
 
-        public FeedForwardNetwork(int[] layerSizes, IDoubleEvaluatable[] transferFunctions, IDoubleCostFunction costFunction)
+        public FeedForwardNetwork(int[] layerSizes, IDoubleEvaluatable[] activationFunctions, IDoubleCostFunction costFunction)
         {
             this.costFunction = costFunction;
 
             // Validate input
-            if (transferFunctions.Length != layerSizes.Length)
+            if (activationFunctions.Length != layerSizes.Length)
             {
                 throw new ArgumentException("Cannot create a network with the provided parameters.");
             }
@@ -44,7 +44,7 @@ namespace NeuralNetwork
             delta = new double[layerCount][];
 
             // Treat input layer separately
-            inputLayer = new NeuronLayer(layerSizes[0], transferFunctions[0]);
+            inputLayer = new NeuronLayer(layerSizes[0], activationFunctions[0]);
 
             // Create hidden layers and output layer
             hiddenLayers = new NeuronLayer[layerCount];
@@ -55,12 +55,16 @@ namespace NeuralNetwork
                 layerOutput[i] = new double[layerSizes[i + 1]];
                 delta[i] = new double[layerSizes[i + 1]];
 
-                hiddenLayers[i] = new NeuronLayer(layerSizes[i + 1], transferFunctions[i + 1]);
+                hiddenLayers[i] = new NeuronLayer(layerSizes[i + 1], activationFunctions[i + 1]);
             }
 
             Console.WriteLine("Creating synapses ...");
 
             InitializeSynapses();
+        }
+
+        public FeedForwardNetwork(NetworkTopology topology) : this(topology.LayerSizes, topology.ActivationFunctions, topology.CostFunction)
+        {
         }
 
         #region properties
@@ -71,6 +75,8 @@ namespace NeuralNetwork
         }
 
         #endregion
+
+        #region methods
 
         public void Write()
         {
@@ -214,6 +220,69 @@ namespace NeuralNetwork
             return cost;
         }
 
+        #endregion
+
     }
+
+    public class NetworkTopology
+    {
+        private int[] layerSizes;
+        private IDoubleEvaluatable[] activationFunctions;
+        private IDoubleCostFunction costFunction;
+
+        public NetworkTopology(int[] layerSizes, IDoubleEvaluatable[] activationFunctions, IDoubleCostFunction costFunction)
+        {
+            this.LayerSizes = layerSizes;
+            this.ActivationFunctions = activationFunctions;
+            this.CostFunction = costFunction;
+        }
+
+        public NetworkTopology(int[] layerSizes, IDoubleEvaluatable activationFunction, IDoubleCostFunction costFunction)
+        {
+            // Fill list with one transferfunction for each layer
+            IDoubleEvaluatable[] activationFunctions = new IDoubleEvaluatable[layerSizes.Length];
+            HelperClass.PopulateArray(activationFunctions, activationFunction);
+
+            this.LayerSizes = layerSizes;
+            this.ActivationFunctions = activationFunctions;
+            this.CostFunction = costFunction;
+        }
+
+        #region properties
+
+        public int Size
+        {
+            get { return this.LayerSizes.Length; }
+        }
+
+        public int[] LayerSizes
+        {
+            get { return this.layerSizes; }
+            set { this.layerSizes = value; }
+        }
+
+        public IDoubleEvaluatable[] ActivationFunctions
+        {
+            get { return this.activationFunctions; }
+            set { this.activationFunctions = value; }
+        }
+
+        public IDoubleEvaluatable OutputLayerActivationFunction
+        {
+            get { return this.activationFunctions[Size - 1]; }
+            set { this.activationFunctions[Size - 1] = value; }
+        }
+
+        public IDoubleCostFunction CostFunction
+        {
+            get { return this.costFunction; }
+            set { this.costFunction = value; }
+        }
+
+        #endregion
+
+    }
+
+
 
 }

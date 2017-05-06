@@ -18,13 +18,13 @@ namespace NeuralNetworkApp
             IdenfificationDataFactory dataFactory = new TestIdentificationDataFactory(10, 100);
             IdentificationDataSet dataSet = dataFactory.GetData();
 
-            // Create net
+            // Create network topology
             int[] layerSizes = { 1, 8, 8, 1 };
-            IDoubleEvaluatable[] activationFunction =  {new None(),
-                                                        new TanhActivationFunction(),
-                                                        new TanhActivationFunction(),
-                                                        new Linear()};
-            FeedForwardNetwork net = new FeedForwardNetwork(layerSizes, activationFunction, new SquaredErrorFunction());
+            NetworkTopology topology = new NetworkTopology(layerSizes, new TanhActivationFunction(), new SquaredErrorFunction());
+            topology.OutputLayerActivationFunction = new LinearActivationFunction();
+
+            // Create net
+            FeedForwardNetwork net = new FeedForwardNetwork(topology);
 
             // Create network trainer
             SimpleNetworkTrainer trainer = SimpleNetworkTrainer.Instance;
@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 100;
+            opt.MaxIterations = 1000;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
@@ -91,7 +91,6 @@ namespace NeuralNetworkApp
             string setFile = Path.Combine(outputFolder, "neural_net_reference_set.txt");
             writer = new FormattingStreamWriter(setFile, System.Globalization.CultureInfo.InvariantCulture);
             dataSet.TrySerialize(writer);
-
 
             /*
             trainInfo.WriteTrainingSummary();

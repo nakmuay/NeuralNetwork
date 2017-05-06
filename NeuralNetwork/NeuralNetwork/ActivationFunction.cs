@@ -89,7 +89,7 @@ namespace NeuralNetwork
 
     }
 
-    public class RectifiedLinearUnit : IDoubleEvaluatable
+    public class RectifiedLinearUnitFunction : IDoubleEvaluatable
     {
 
         public double Evaluate(double value)
@@ -105,7 +105,7 @@ namespace NeuralNetwork
     }
 
 
-    public class LeakyRectifiedLinearUnit : IDoubleEvaluatable
+    public class LeakyRectifiedLinearUnitFunction : IDoubleEvaluatable
     {
 
         private double positiveHalfPlaneSlope = 1.0;
@@ -124,7 +124,7 @@ namespace NeuralNetwork
     }
 
 
-    public class Linear : IDoubleEvaluatable
+    public class LinearActivationFunction : IDoubleEvaluatable
     {
 
         public double Evaluate(double value)
