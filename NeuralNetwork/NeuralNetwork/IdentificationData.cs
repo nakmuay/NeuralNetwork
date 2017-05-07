@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -114,7 +115,7 @@ namespace NeuralNetwork
         public bool TrySerialize(System.IO.StreamWriter writer, string delimiter=",")
         {
             // Write header
-            writer.WriteLine(String.Format("Set_size:{0}", this.Size));
+            writer.WriteLine(String.Format("set_size:{0}", this.Size));
             writer.WriteLine();
 
             for (int i = 0; i < this.Size; i++)
@@ -243,34 +244,70 @@ namespace NeuralNetwork
 
         public bool TrySerialize(System.IO.StreamWriter writer, string delimiter=",")
         {
-            writer.WriteLine(String.Format("Name:{0}", this.Name));
-            writer.WriteLine(String.Format("Number_of_samples:{0}", this.NumSamples));
+            writer.WriteLine(String.Format("name:{0}", this.Name));
+            writer.WriteLine(String.Format("number_of_samples:{0}", this.NumSamples));
 
             // Write header
-            for (int i = 0; i < NumInputVariables; i++)
+            string[] lineItems;
+            if (NumInputVariables >= 0)
             {
-                writer.Write(String.Format("input_{0}:{1}{2}", i, InputName[i], delimiter));
+                lineItems = new string[NumInputVariables];
+                for (int i = 0; i < NumInputVariables; i++)
+                {
+                    lineItems[i] = String.Format("input:{0}", InputName[i]);
+                }
+                writer.Write(string.Join(delimiter, lineItems));
             }
 
-            for (int i = 0; i < NumOutputVariables; i++)
+            if (NumOutputVariables >= 0)
             {
-                writer.Write(String.Format("output_{0}:{1}{2}", i, OutputName[i], delimiter));
+                lineItems = new string[NumOutputVariables];
+                for (int i = 0; i < NumOutputVariables; i++)
+                {
+                    lineItems[i] = String.Format("output:{0}", OutputName[i]);
+                }
+
+                // Write a delimiter if we have previously written input variables
+                if (NumInputVariables >= 0)
+                {
+                    writer.Write(delimiter);
+                }
+
+                writer.Write(string.Join(delimiter, lineItems));
             }
             writer.WriteLine();
 
             // Write data
             for (int i = 0; i < NumSamples; i++)
             {
-                // Write input data
-                for (int j = 0; j < NumInputVariables; j++)
+                if (NumInputVariables >= 0)
                 {
-                    writer.Write("{0}{1}", InputData[i][0], delimiter);
+                    // Write input data
+                    lineItems = new string[NumInputVariables];
+                    for (int j = 0; j < NumInputVariables; j++)
+                    {
+                        lineItems[j] = String.Format(CultureInfo.InvariantCulture, "{0}", InputData[i][j]);
+                    }
+
+                    writer.Write(string.Join(delimiter, lineItems));
                 }
 
-                // Write output data
-                for (int j = 0; j < NumOutputVariables; j++)
+                if (NumOutputVariables >= 0)
                 {
-                    writer.Write("{0}{1}", OutputData[i][0], delimiter);
+                    // Write output data
+                    lineItems = new string[NumOutputVariables];
+                    for (int j = 0; j < NumOutputVariables; j++)
+                    {
+                        lineItems[j] = String.Format(CultureInfo.InvariantCulture, "{0}", OutputData[i][j]);
+                    }
+
+                    // Write a delimiter if we have previously written input variables
+                    if (NumInputVariables >= 0)
+                    {
+                        writer.Write(delimiter);
+                    }
+
+                    writer.Write(string.Join(delimiter, lineItems));
                 }
                 writer.WriteLine();
             }

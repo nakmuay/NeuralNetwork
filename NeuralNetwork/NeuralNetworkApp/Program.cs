@@ -32,7 +32,7 @@ namespace NeuralNetworkApp
             // Create trainging options
             TrainingOptions opt = new TrainingOptions();
             opt.MaxError = 1.0E-2;
-            opt.MaxIterations = 1000;
+            opt.MaxIterations = 100;
             
             // Partition data
             RandomCrossValidationFactory cvFactory = new RandomCrossValidationFactory(dataSet.Size, 0.7, 10);
@@ -90,7 +90,10 @@ namespace NeuralNetworkApp
 
             string setFile = Path.Combine(outputFolder, "neural_net_reference_set.txt");
             writer = new FormattingStreamWriter(setFile, System.Globalization.CultureInfo.InvariantCulture);
-            dataSet.TrySerialize(writer);
+            using (writer)
+            {
+                dataSet.TrySerialize(writer);
+            }
 
             /*
             trainInfo.WriteTrainingSummary();
