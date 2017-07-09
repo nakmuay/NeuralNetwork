@@ -1,4 +1,6 @@
 **/bin
 **/obj
+**/.vs
 *.txt
+*.suo
 .DS_Store
